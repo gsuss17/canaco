@@ -12,7 +12,7 @@
         </li>
         <li>
             <a
-                href=""
+                href="{%url 'home:crud_noticias' %}"
                 class="nav-link panel-nav-link {% if current == 'crud_noticias' or current == 'crear_publicacion' or current == 'editar_publicacion' %}active{% endif %}"
             >
                 <span>Noticias</span>
@@ -20,7 +20,7 @@
         </li>
         <li>
             <a
-                href=""
+                href="{%url 'home:crud_comentarios' %}"
                 class="nav-link panel-nav-link {% if current == 'crud_comentarios' %}active{% endif %}"
             >
                 <span>Comentarios</span>
@@ -28,7 +28,7 @@
         </li>
         <li>
             <a
-                href=""
+                href="{%url 'home:crud_categorias' %}"
                 class="nav-link panel-nav-link {% if current == 'crud_categorias' or current == 'editar_categoria' %}active{% endif %}"
             >
                 <span>Categorías</span>
@@ -36,7 +36,7 @@
         </li>
         <li>
             <a
-                href=""
+                href="{%url 'home:crud_usuarios' %}"
                 class="nav-link panel-nav-link {% if current == 'crud_usuarios' or current == 'crear_usuario' or current == 'editar_usuario' %}active{% endif %}"
             >
                 <span>Usuarios</span>
@@ -44,7 +44,7 @@
         </li>
         <li>
             <a
-                href=""
+                href="{%url 'home:crud_cambiar_contrasena'%}"
                 class="nav-link panel-nav-link {% if current == 'crud_cambiar_contrasena' or current == 'crud_cambContra' %}active{% endif %}"
             >
                 <span>Cambiar<br />contraseña</span>
