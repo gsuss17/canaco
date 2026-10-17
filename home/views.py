@@ -1,10 +1,51 @@
+import os
 from django.contrib.auth.decorators import login_required, user_passes_test 
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.contrib import messages 
+from django.contrib.auth.models import User 
+from .models import Archivo, Categoria, Comentario, GaleriaPublicacion, Perfil, Publicacion 
+from django.core.files.storage import default_storage 
 
 def es_operador(user): 
     return user.is_authenticated and user.is_staff and user.is_active 
 
 operador_required = user_passes_test(es_operador, login_url='home:login')
+
+
+def sign_up(request): 
+    if request.method == 'POST': 
+        username = request.POST.get('username', '').strip() 
+        email = request.POST.get('email', '').strip() 
+        first_name = request.POST.get('first_name', '').strip() 
+        apellido_paterno = request.POST.get('apellido_paterno', '').strip() 
+        apellido_materno = request.POST.get('apellido_materno', '').strip() 
+        password1 = request.POST.get('password1', '') 
+        password2 = request.POST.get('password2', '') 
+
+        if password1 != password2: 
+            messages.error(request, 'Las contraseñas no coinciden.') 
+            return redirect('home:sign_up') 
+
+        if User.objects.filter(username=username).exists(): 
+            messages.error(request, 'El nombre de usuario ya está en uso.') 
+            return redirect('home:sign_up') 
+
+        if User.objects.filter(email=email).exists(): 
+            messages.error(request, 'El correo electrónico ya está registrado.') 
+            return redirect('home:sign_up') 
+
+        user = User.objects.create_user(username=username, email=email, password=password1) 
+        user.first_name = first_name 
+        user.last_name = ' '.join(filter(None, [apellido_paterno, apellido_materno])) 
+        user.save() 
+        perfil, _ = Perfil.objects.get_or_create(user=user) 
+        perfil.apellido_paterno = apellido_paterno 
+        perfil.apellido_materno = apellido_materno 
+        perfil.save()
+        messages.success(request, 'Tu cuenta ha sido creada con éxito. Ahora puedes iniciar sesión.') 
+        return redirect('home:login') 
+    
+    return render(request, 'home/sign_up.html')
 
 # --- VISTAS PÚBLICAS ---
 def index(request):
