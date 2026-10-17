@@ -12,6 +12,31 @@ def es_operador(user):
 operador_required = user_passes_test(es_operador, login_url='home:login')
 
 
+# --- VISTAS PÚBLICAS ---
+def index(request):
+    return render(request, "home/index.html")
+
+
+def base(request):
+    return render(request, "home/base.html")
+
+
+def contactanos(request):
+    return render(request, "home/contactanos.html")
+
+
+def categoria(request):
+    return render(request, "home/categoria.html")
+
+
+def login(request):
+    return render(request, "home/login.html")
+
+
+def noticia(request):
+    return render(request, "home/noticia.html")
+
+
 def sign_up(request): 
     if request.method == 'POST': 
         username = request.POST.get('username', '').strip() 
@@ -47,39 +72,12 @@ def sign_up(request):
     
     return render(request, 'home/sign_up.html')
 
-# --- VISTAS PÚBLICAS ---
-def index(request):
-    return render(request, "home/index.html")
-
-
-def base(request):
-    return render(request, "home/base.html")
-
-
-def contactanos(request):
-    return render(request, "home/contactanos.html")
-
-
-def categoria(request):
-    return render(request, "home/categoria.html")
-
-
-def login(request):
-    return render(request, "home/login.html")
-
-
-def noticia(request):
-    return render(request, "home/noticia.html")
-
-
-def sign_up(request):
-    return render(request, "home/sign_up.html")
-
 
 # --- VISTAS PARA USUARIOS LOGUEADOS ---
 @login_required
 def perfil(request):
-    return render(request, "home/perfil.html")
+    perfil_usuario, _ = Perfil.objects.get_or_create(user=request.user)
+    return render(request, 'home/perfil.html', {'perfil_usuario': perfil_usuario}) 
 
 @login_required
 def crear_publicacion(request):  # Asumiendo que usuarios normales pueden publicar
@@ -89,9 +87,69 @@ def crear_publicacion(request):  # Asumiendo que usuarios normales pueden public
 def crud_cambiar_contrasena(request):
     return render(request, "home/crud_cambiar_contrasena.html")
 
+def guardar_archivo(upload, user):
+    filename = default_storage.save(f"uploads/{upload.name}", upload)
+    return Archivo.objects.create(
+        nombre=upload.name,
+        nombre_temporal=filename,
+        ruta=filename,
+        tipo=upload.content_type,
+        tamano=upload.size,
+        fk_user=user,
+    )
+
 @login_required
 def crud_perfil(request):
-    return render(request, "home/crud_perfil.html")
+    user = request.user
+    perfil, _ = Perfil.objects.get_or_create(user=user)
+
+    if request.method == 'POST':
+        username = request.POST.get('username', '').strip()
+        email = request.POST.get('email', '').strip()
+        first_name = request.POST.get('first_name', '').strip()
+        apellido_paterno = request.POST.get('apellido_paterno',
+        '').strip()
+        apellido_materno = request.POST.get('apellido_materno',
+        '').strip()
+        foto = request.FILES.get('foto')
+
+        if not username:
+            messages.error(request, 'El usuario es obligatorio.')
+            return redirect('home:crud_perfil')
+        
+        if User.objects.filter(username=username).exclude(pk=user.pk).exists():
+            messages.error(request, 'Ese nombre de usuario ya está en uso.')
+            return redirect('home:crud_perfil')
+        
+        user.username = username
+
+        if email:
+            user.email = email
+
+        user.first_name = first_name
+        user.last_name = ' '.join(filter(None, [apellido_paterno, apellido_materno]))
+        user.save()
+
+        perfil.apellido_paterno = apellido_paterno
+        perfil.apellido_materno = apellido_materno
+
+        if foto:
+            if perfil.foto_perfil:
+                archivo_anterior = perfil.foto_perfil
+
+                if archivo_anterior.ruta and hasattr(archivo_anterior.ruta, 'path') and os.path.exists(archivo_anterior.ruta.path):
+                    os.remove(archivo_anterior.ruta.path)
+                
+                archivo_anterior.delete()
+
+            perfil.foto_perfil = guardar_archivo(foto, user)
+        
+        perfil.save()
+
+        messages.success(request, 'Perfil actualizado correctamente.')
+        return redirect('home:perfil')
+    
+    return render(request, 'home/crud_perfil.html', {'perfil_usuario': perfil})
 
 
 # --- VISTAS PARA OPERADORES / ADMIN ---
