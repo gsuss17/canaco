@@ -5,6 +5,7 @@ from django.contrib import messages
 from django.contrib.auth.models import User 
 from .models import Archivo, Categoria, Comentario, GaleriaPublicacion, Perfil, Publicacion 
 from django.core.files.storage import default_storage 
+from django.contrib.auth import update_session_auth_hash 
 
 def es_operador(user): 
     return user.is_authenticated and user.is_staff and user.is_active 
@@ -85,7 +86,28 @@ def crear_publicacion(request):  # Asumiendo que usuarios normales pueden public
 
 @login_required
 def crud_cambiar_contrasena(request):
-    return render(request, "home/crud_cambiar_contrasena.html")
+    if request.method == 'POST':
+        actual = request.POST.get('actual')
+        nueva = request.POST.get('nueva')
+        confirmar = request.POST.get('confirmar')
+        user = request.user
+
+        if not user.check_password(actual):
+            messages.error(request, 'La contraseña actual es incorrecta.')
+            return redirect('home:crud_cambiar_contrasena')
+        
+        if nueva != confirmar:
+            messages.error(request, 'Las nuevas contraseñas no  coinciden.')
+            return redirect('home:crud_cambiar_contrasena')
+        
+        user.set_password(nueva)
+        user.save()
+
+        update_session_auth_hash(request, user)
+        messages.success(request, 'Contraseña actualizada correctamente.')
+        return redirect('home:crud_cambiar_contrasena')
+    
+    return render(request, 'home/crud_cambiar_contrasena.html')
 
 def guardar_archivo(upload, user):
     filename = default_storage.save(f"uploads/{upload.name}", upload)
