@@ -1,6 +1,6 @@
 import os
 from django.contrib.auth.decorators import login_required, user_passes_test 
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages 
 from django.contrib.auth.models import User 
 from .models import Archivo, Categoria, Comentario, GaleriaPublicacion, Perfil, Publicacion 
@@ -197,9 +197,110 @@ def crud_noticias(request):
 
 @operador_required
 def crud_usuarios(request):
-    return render(request, "home/crud_usuarios.html")
+    for usuario in User.objects.all():
+        Perfil.objects.get_or_create(user=usuario)
+        usuarios = User.objects.select_related('perfil').order_by('date_joined')
+    return render(request, 'home/crud_usuarios.html', {'usuarios': usuarios})
 
 
 @operador_required
 def editar_categoria(request):
     return render(request, "home/editar_categoria.html")
+
+
+@operador_required
+def editar_usuario(request, pk):
+    usuario = get_object_or_404(User, pk=pk)
+    perfil, _ = Perfil.objects.get_or_create(user=usuario)
+    if request.method == 'POST':
+        usuario.username = request.POST.get('username',
+        usuario.username).strip()
+        usuario.email = request.POST.get('email', usuario.email).strip()
+        usuario.first_name = request.POST.get('first_name',
+        usuario.first_name).strip()
+        perfil.apellido_paterno = request.POST.get('apellido_paterno',
+        perfil.apellido_paterno).strip()
+        perfil.apellido_materno = request.POST.get('apellido_materno',
+        perfil.apellido_materno).strip()
+        usuario.last_name = ' '.join(filter(None, [perfil.apellido_paterno, perfil.apellido_materno]))
+        rol = request.POST.get('rol')
+
+        if rol:
+            usuario.is_staff = rol in ['editor', 'administrador']
+            usuario.is_superuser = rol == 'administrador'
+        
+        password1 = request.POST.get('password1', '')
+        password2 = request.POST.get('password2', '')
+
+        if password1 or password2:
+            if password1 != password2:
+                messages.error(request, 'Las contraseñas no coinciden.')
+                return redirect('home:editar_usuario', pk=usuario.pk)
+            
+            usuario.set_password(password1)
+
+        usuario.save()
+        perfil.save()
+        messages.success(request, 'Usuario actualizado correctamente.')
+        return redirect('home:crud_usuarios')
+    return render(request, 'home/crear_usuario.html', {
+        'usuario_editado': usuario,
+        'perfil_editado': perfil,
+    })
+
+
+@operador_required
+def bloquear_usuario(request, pk):
+    usuario = get_object_or_404(User, pk=pk)
+    if usuario != request.user:
+        usuario.is_active = not usuario.is_active
+        usuario.save()
+    return redirect('home:crud_usuarios') 
+
+
+@operador_required
+def eliminar_usuario(request, pk):
+    usuario = get_object_or_404(User, pk=pk)
+    if request.method == 'POST' and usuario != request.user:
+        usuario.delete()
+    return redirect('home:crud_usuarios') 
+
+
+@operador_required
+def crear_usuario(request):
+    if request.method == 'POST':
+        username = request.POST.get('username', '').strip()
+        email = request.POST.get('email', '').strip()
+        first_name = request.POST.get('first_name', '').strip()
+        apellido_paterno = request.POST.get('apellido_paterno', '').strip()
+        apellido_materno = request.POST.get('apellido_materno', '').strip()
+        password1 = request.POST.get('password1', '')
+        password2 = request.POST.get('password2', '')
+
+        if not username or not password1:
+            messages.error(request, 'Usuario y contraseña son obligatorios.')
+            return redirect('home:crear_usuario')
+        
+        if password1 != password2:
+            messages.error(request, 'Las contraseñas no coinciden.')
+            return redirect('home:crear_usuario')
+        
+        if User.objects.filter(username=username).exists():
+            messages.error(request, 'El usuario ya existe.')
+            return redirect('home:crear_usuario')
+        
+        user = User.objects.create_user(username=username, email=email, password=password1)
+        user.first_name = first_name
+        user.last_name = ' '.join(filter(None, [apellido_paterno, apellido_materno]))
+        rol = request.POST.get('rol')
+        user.is_staff = rol in ['editor', 'administrador']
+        user.is_superuser = rol == 'administrador'
+        user.save()
+        perfil, _ = Perfil.objects.get_or_create(user=user)
+        perfil.apellido_paterno = apellido_paterno
+        perfil.apellido_materno = apellido_materno
+        perfil.save()
+        messages.success(request, 'Usuario creado correctamente.')
+        return redirect('home:crud_usuarios')
+    
+    return render(request, 'home/crear_usuario.html')
