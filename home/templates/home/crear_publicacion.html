@@ -55,7 +55,7 @@
                     {% for categoria in categorias %}
                         <option
                             value="{{ categoria.id }}"
-                            {% if publicacion and publicacion.categoria_id == "categoria.id"%}
+                            {% if publicacion and publicacion.categoria_id == categoria.id%}
                                 selected
                             {% endif %}
                         >
