@@ -216,7 +216,33 @@ def eliminar_categoria(request, pk):
 
 @operador_required
 def crud_comentarios(request):
-    return render(request, "home/crud_comentarios.html")
+    comentarios = Comentario.objects.select_related('publicacion', 'user').order_by('-createdat')
+    return render(request, 'home/crud_comentarios.html', {'comentarios': comentarios})
+
+
+@operador_required
+def aprobar_comentario(request, pk):
+    comentario = get_object_or_404(Comentario, pk=pk)
+    comentario.estado = Comentario.ESTADO_APROBADO
+    comentario.save()
+    return redirect('home:crud_comentarios')
+
+
+@operador_required
+def bloquear_comentario(request, pk):
+    comentario = get_object_or_404(Comentario, pk=pk)
+    comentario.estado = Comentario.ESTADO_BLOQUEADO
+    comentario.save()
+    return redirect('home:crud_comentarios')
+
+
+@operador_required
+def eliminar_comentario(request, pk):
+    comentario = get_object_or_404(Comentario, pk=pk)
+    if request.method == 'POST':
+        comentario.delete()
+    return redirect('home:crud_comentarios')
+
 
 
 @operador_required
