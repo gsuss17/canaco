@@ -25,12 +25,14 @@
                 <h1 class="mb-4">{{ publicacion.titulo }}</h1>
 
                 {% if publicacion.imagen_portada %}
-                    <img
-                        src="{{ publicacion.imagen_portada.display_url }}"
-                        alt="{{ publicacion.titulo }}"
-                        class="img-fluid rounded mb-4 publication-cover-image"
-                        style="max-height: 500px; width: 100%; object-fit: cover; object-position: center;"
-                    />
+                    <a href="{{ publicacion.imagen_portada.display_url }}" class="glightbox" data-gallery="noticia-galeria">
+                        <img
+                            src="{{ publicacion.imagen_portada.display_url }}"
+                            alt="{{ publicacion.titulo }}"
+                            class="img-fluid rounded mb-4 publication-cover-image"
+                            style="max-height: 500px; width: 100%; object-fit: cover; object-position: center; cursor: zoom-in;"
+                        />
+                    </a>
                 {% endif %}
 
                 <div class="post-meta mb-4">
@@ -56,12 +58,16 @@
                 <div class="row my-4">
                     {% for imagen in publicacion.galeria.all %}
                         <div class="col-md-4 mb-4">
-                            <img
-                                src="{{ imagen.archivo.display_url }}"
-                                alt="Galería"
-                                class="img-fluid rounded publication-gallery-image"
-                                style="height: 250px; width: 100%; object-fit: cover; object-position: center;"
-                            />
+                            <a href="{{ imagen.archivo.display_url }}" class="glightbox" data-gallery="noticia-galeria">
+                                <img
+                                    src="{{ imagen.archivo.display_url }}"
+                                    alt="Galería"
+                                    class="img-fluid rounded publication-gallery-image"
+                                    style="height: 250px; width: 100%; object-fit: cover; object-position: center; cursor: zoom-in; transition: transform 0.2s ease;"
+                                    onmouseover="this.style.transform='scale(1.02)'"
+                                    onmouseout="this.style.transform='scale(1)'"
+                                />
+                            </a>
                         </div>
                     {% empty %}
                         <div class="col-12">
@@ -151,4 +157,30 @@
         </div>
     </div>
 </section>
+
+<!-- Script para inicializar GLightbox y vincular fotos del contenido -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Enlaza automáticamente cualquier imagen que venga dentro del cuerpo del texto
+        document.querySelectorAll(".post-content-body img").forEach(function (img) {
+            img.style.cursor = "zoom-in";
+            const enlace = document.createElement("a");
+            enlace.href = img.src;
+            enlace.className = "glightbox";
+            enlace.setAttribute("data-gallery", "noticia-galeria");
+            img.parentNode.insertBefore(enlace, img);
+            enlace.appendChild(img);
+        });
+
+        // Inicializa el visor lightbox con animación suave
+        if (typeof GLightbox !== "undefined") {
+            GLightbox({
+                selector: ".glightbox",
+                touchNavigation: true,
+                loop: true,
+                zoomable: true
+            });
+        }
+    });
+</script>
 {% endblock content %}
