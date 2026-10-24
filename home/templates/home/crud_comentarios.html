@@ -1,6 +1,8 @@
 {% extends 'partials/sidebar_base.html' %}
 {% load static %}
-{% block title %}Comentarios{% endblock%}
+
+{% block title %}Comentarios{% endblock title %}
+
 {% block content %}
 <div class="container mt-4">
     <h1 class="mb-4 text-center">Comentarios</h1>
@@ -33,31 +35,23 @@
                             {% endif %}
                         </td>
                         <td>
-                            <a
-                                href="{% url 'home:aprobar_comentario' comentario.id %}"
-                                class="btn btn-success btn-sm"
-                                >Aprobar</a
-                            >
-                        </td>
-
-                        <td>
-                            <a
-                                href="{% url 'home:bloquear_comentario' comentario.id %}"
-                                class="btn btn-warning btn-sm"
-                                >Bloquear</a
-                            >
+                            <a href="{% url 'home:aprobar_comentario' comentario.id %}" class="btn btn-success btn-sm">
+                                Aprobar
+                            </a>
                         </td>
                         <td>
-                            <form
-                                method="post"
-                                action="{% url 'home:eliminar_comentario' comentario.id %}"
-                            >
+                            <a href="{% url 'home:bloquear_comentario' comentario.id %}" class="btn btn-warning btn-sm">
+                                Bloquear
+                            </a>
+                        </td>
+                        <td>
+                            <form method="post" action="{% url 'home:eliminar_comentario' comentario.id %}">
                                 {% csrf_token %}
                                 <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
                             </form>
                         </td>
                     </tr>
-                    {% empty %}
+                {% empty %}
                     <tr>
                         <td colspan="8" class="text-center">No hay comentarios.</td>
                     </tr>

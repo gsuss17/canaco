@@ -1,6 +1,8 @@
 {% extends 'partials/sidebar_base.html' %}
 {% load static %}
-{% block title %}Editar Mi Perfil{% endblock %}
+
+{% block title %}Editar Mi Perfil{% endblock title %}
+
 {% block content %}
 <div class="profile-page">
     <div class="profile-edit-card">
@@ -8,6 +10,7 @@
         <p>
             Estos datos pertenecen a tu cuenta actual: <strong>{{ request.user.username }}</strong>.
         </p>
+
         {% if messages %}
             {% for message in messages %}
                 <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
@@ -21,6 +24,7 @@
                 </div>
             {% endfor %}
         {% endif %}
+
         <div class="profile-photo-wrap mb-4">
             {% if perfil_usuario.foto_perfil %}
                 <img
@@ -36,8 +40,10 @@
                 />
             {% endif %}
         </div>
+
         <form method="POST" enctype="multipart/form-data" class="profile-edit-form">
             {% csrf_token %}
+
             <div class="profile-form-row">
                 <label for="username">Usuario</label>
                 <input
@@ -48,10 +54,12 @@
                     required
                 />
             </div>
+
             <div class="profile-form-row">
                 <label for="email">Correo</label>
                 <input type="email" id="email" name="email" value="{{ request.user.email }}" />
             </div>
+
             <div class="profile-form-row">
                 <label for="first_name">Nombre</label>
                 <input
@@ -61,6 +69,7 @@
                     value="{{ request.user.first_name }}"
                 />
             </div>
+
             <div class="profile-form-row">
                 <label for="apellido_paterno">Paterno</label>
                 <input
@@ -70,6 +79,7 @@
                     value="{{ perfil_usuario.apellido_paterno }}"
                 />
             </div>
+
             <div class="profile-form-row">
                 <label for="apellido_materno">Materno</label>
                 <input
@@ -79,10 +89,12 @@
                     value="{{ perfil_usuario.apellido_materno }}"
                 />
             </div>
+
             <div class="profile-form-row">
                 <label for="foto">Foto</label>
                 <input type="file" id="foto" name="foto" />
             </div>
+
             <div class="profile-form-actions">
                 <button type="submit" class="btn btn-primary">Guardar cambios</button>
                 <a href="{% url 'home:perfil' %}" class="btn btn-outline-secondary">Cancelar</a>
