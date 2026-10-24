@@ -17,11 +17,26 @@
             right: 15px;
             font-style: normal;
         }
+        /* Estilos armonizados para las tarjetas de imágenes */
+        .preview-card {
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+            transition: all 0.2s ease-in-out;
+        }
+        .preview-card:hover {
+            border-color: #dee2e6;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        .preview-thumb {
+            object-fit: cover;
+            border-radius: 6px;
+        }
     </style>
 {% endblock extra_css %}
 
 {% block content %}
-<div class="container mt-4">
+<div class="container mt-4 mb-5">
     <h1 class="mb-4 text-center">
         {% if publicacion %}
             Editar Publicación
@@ -92,17 +107,50 @@
             </div>
         </div>
 
-        <div class="mb-3">
-            <label for="imagen_portada" class="form-label">Imagen de portada</label>
-            <input type="file" class="form-control" id="imagen_portada" name="imagen_portada" />
+        <!-- Sección Imagen de Portada -->
+        <div class="mb-4">
+            <label for="imagen_portada" class="form-label d-block">Imagen de portada</label>
+
             {% if publicacion and publicacion.imagen_portada %}
-                <small class="text-muted d-block mt-1">Actual: {{ publicacion.imagen_portada.nombre }}</small>
+                <div class="preview-card p-3 mb-3 d-inline-block">
+                    <div class="d-flex align-items-center gap-3">
+                        <img
+                            src="{{ publicacion.imagen_portada.display_url }}"
+                            alt="Portada actual"
+                            class="preview-thumb border"
+                            style="width: 140px; height: 85px; cursor: pointer;"
+                            onclick="abrirModalImagen('{{ publicacion.imagen_portada.display_url }}')"
+                            title="Clic para ampliar"
+                        />
+                        <div>
+                            <p class="mb-2 fw-medium text-truncate" style="max-width: 260px;">
+                                <i class="bi bi-image me-1 text-muted"></i>{{ publicacion.imagen_portada.nombre }}
+                            </p>
+                            <div class="form-check">
+                                <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    name="eliminar_portada"
+                                    id="eliminar_portada"
+                                    value="1"
+                                />
+                                <label class="form-check-label text-danger small fw-semibold" for="eliminar_portada">
+                                    <i class="bi bi-trash3 me-1"></i>Quitar portada actual
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             {% endif %}
+
+            <input type="file" class="form-control" id="imagen_portada" name="imagen_portada" accept="image/*" />
+            <small class="text-muted d-block mt-1">Si seleccionas un archivo nuevo, reemplazará a la portada actual.</small>
         </div>
 
-        <div class="mb-3">
+        <!-- Editor de Contenido -->
+        <div class="mb-4">
             <label for="editor" class="form-label">Contenido</label>
-            <div id="editor" class="form-control" style="height: 300px">
+            <div id="editor" class="form-control" style="height: 320px">
                 {% if publicacion %}
                     {{ publicacion.contenido|safe }}
                 {% endif %}
@@ -110,17 +158,66 @@
             <input type="hidden" name="contenido" id="contenido" />
         </div>
 
-        <div class="mb-3">
-            <label for="galeria" class="form-label">Galería de imágenes</label>
-            <input type="file" class="form-control" id="galeria" name="galeria" multiple />
+        <!-- Sección Galería de Imágenes -->
+        <div class="mb-4">
+            <label class="form-label d-block">Galería de imágenes</label>
+
+            {% if publicacion and publicacion.galeria.all %}
+                <div class="row g-3 mb-3">
+                    {% for item in publicacion.galeria.all %}
+                        <div class="col-6 col-md-4 col-lg-3">
+                            <div class="card h-100 preview-card p-2 text-center">
+                                <img
+                                    src="{{ item.archivo.display_url }}"
+                                    alt="Galería"
+                                    class="preview-thumb w-100 mb-2 border"
+                                    style="height: 120px; cursor: pointer;"
+                                    onclick="abrirModalImagen('{{ item.archivo.display_url }}')"
+                                    title="Clic para ampliar"
+                                />
+                                <div class="form-check d-flex justify-content-center align-items-center gap-1 pt-1">
+                                    <input
+                                        class="form-check-input"
+                                        type="checkbox"
+                                        name="eliminar_imagenes_galeria"
+                                        value="{{ item.id }}"
+                                        id="del_gal_{{ item.id }}"
+                                    />
+                                    <label class="form-check-label text-danger small fw-semibold" for="del_gal_{{ item.id }}">
+                                        <i class="bi bi-trash3 me-1"></i>Eliminar
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-muted small fst-italic mb-2">No hay imágenes en la galería actualmente.</p>
+            {% endif %}
+
+            <label for="galeria" class="form-label small text-muted mt-2">Agregar más imágenes a la galería</label>
+            <input type="file" class="form-control" id="galeria" name="galeria" multiple accept="image/*" />
         </div>
 
-        <div class="d-grid gap-2">
+        <div class="d-grid gap-2 pt-2">
             <button type="submit" class="btn btn-primary">Guardar Publicación</button>
             <a href="{% url 'home:crud_noticias' %}" class="btn btn-outline-secondary">Cancelar</a>
         </div>
     </form>
 </div>
+
+<!-- Modal para ver imágenes ampliadas -->
+<div class="modal fade" id="imagePreviewModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content bg-transparent border-0 shadow-none">
+            <div class="modal-body text-center p-0 position-relative">
+                <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                <img id="modalImgTarget" src="" alt="Vista previa ampliada" class="img-fluid rounded shadow" style="max-height: 85vh; object-fit: contain;">
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock content %}
 
 {% block extra_js %}
@@ -134,5 +231,13 @@
         document.querySelector(".formEditor").addEventListener("submit", function () {
             document.querySelector("#contenido").value = quill.root.innerHTML;
         });
+
+        // Función para mostrar la foto en el modal
+        function abrirModalImagen(url) {
+            const modalImg = document.getElementById("modalImgTarget");
+            modalImg.src = url;
+            const myModal = new bootstrap.Modal(document.getElementById("imagePreviewModal"));
+            myModal.show();
+        }
     </script>
 {% endblock extra_js %}

@@ -303,24 +303,44 @@ def crear_publicacion(request):
 def editar_publicacion(request, pk):
     publicacion = get_object_or_404(Publicacion, pk=pk)
     categorias = Categoria.objects.all().order_by("nombre")
+
     if request.method == "POST":
+        # 1. Campos de texto
         publicacion.titulo = request.POST.get("titulo", "").strip()
         publicacion.resumen = request.POST.get("resumen", "").strip()
         publicacion.contenido = request.POST.get("contenido", "").strip()
         publicacion.categoria_id = request.POST.get("categoria") or None
         publicacion.estado = request.POST.get("estado") or Publicacion.ESTADO_BORRADOR
+
+        # 2. Quitar portada si se marcó la casilla
+        if request.POST.get("eliminar_portada"):
+            publicacion.imagen_portada = None
+
+        # 3. Subir nueva portada (reemplaza si se subió un archivo nuevo)
         portada = request.FILES.get("imagen_portada")
         if portada:
             publicacion.imagen_portada = guardar_archivo(portada, request.user)
-            publicacion.save()
 
+        # 4. Guardar cambios de la publicación (siempre debe ejecutarse)
+        publicacion.save()
+
+        # 5. Eliminar imágenes seleccionadas de la galería
+        imagenes_eliminar_ids = request.POST.getlist("eliminar_imagenes_galeria")
+        if imagenes_eliminar_ids:
+            # Borra los registros de GaleriaPublicacion vinculados a esta publicación
+            GaleriaPublicacion.objects.filter(
+                id__in=imagenes_eliminar_ids,
+                publicacion=publicacion
+            ).delete()
+
+        # 6. Agregar imágenes nuevas a la galería
         for imagen in request.FILES.getlist("galeria"):
             GaleriaPublicacion.objects.create(
                 publicacion=publicacion,
                 archivo=guardar_archivo(imagen, request.user),
             )
-        messages.success(request, "Publicación actualizada correctamente.")
 
+        messages.success(request, "Publicación actualizada correctamente.")
         return redirect("home:crud_noticias")
 
     return render(
