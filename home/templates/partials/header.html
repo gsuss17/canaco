@@ -22,15 +22,29 @@
                     </form>
 
                     <ul class="js-clone-nav d-none d-lg-inline-block text-start site-menu mx-auto">
-                        <li class="active"><a href="{% url 'home:index' %}">Inicio</a></li>
-                        <li class="has-children">
-                            <a href="#">Categoría</a>
+                        <li class="{% if request.resolver_match.url_name == 'index' %}active{% endif %}">
+                            <a href="{% url 'home:index' %}">Inicio</a>
+                        </li>
+
+                        <li class="has-children {% if request.resolver_match.url_name in 'categoria categoria_detalle' %}active{% endif %}">
+                            <a href="{% url 'home:categoria' %}">Categorías</a>
                             <ul class="dropdown">
-                                <li><a href="">Todas</a></li>
-                                <li><a href="{% url 'home:categoria' %}">Tecnología</a></li>
+                                <li class="{% if request.resolver_match.url_name == 'categoria' and not categoria_actual %}active{% endif %}">
+                                    <a href="{% url 'home:categoria' %}">Todas</a>
+                                </li>
+                                {% for cat in categorias_header %}
+                                    <li class="{% if categoria_actual and categoria_actual.id == cat.id %}active{% endif %}">
+                                        <a href="{% url 'home:categoria_detalle' cat.id %}">{{ cat.nombre }}</a>
+                                    </li>
+                                {% empty %}
+                                    <li><a href="#">Sin categorías</a></li>
+                                {% endfor %}
                             </ul>
                         </li>
-                        <li><a href="{% url 'home:perfil' %}">Perfil</a></li>
+
+                        <li class="{% if request.resolver_match.url_name == 'perfil' %}active{% endif %}">
+                            <a href="{% url 'home:perfil' %}">Perfil</a>
+                        </li>
                     </ul>
                 </div>
 
