@@ -1,6 +1,8 @@
 {% extends 'partials/sidebar_base.html' %}
 {% load static %}
-{% block title %}Mi Perfil{% endblock %}
+
+{% block title %}Mi Perfil{% endblock title %}
+
 {% block content %}
 <div class="profile-page" style="flex-direction: column; align-items: center">
     {% if messages %}
@@ -18,6 +20,7 @@
             {% endfor %}
         </div>
     {% endif %}
+
     <div class="profile-card">
         <div class="profile-photo-wrap">
             {% if perfil_usuario.foto_perfil %}
@@ -34,6 +37,7 @@
                 />
             {% endif %}
         </div>
+
         <div class="profile-grid">
             <div class="profile-field">
                 <span>Usuario:</span>
@@ -56,8 +60,9 @@
                 <strong>{{ request.user.email|default:"Sin registrar" }}</strong>
             </div>
         </div>
+
         <div class="profile-actions">
-            <a href="{%url 'home:crud_perfil' %}" class="btn btn-success">Editar mi perfil</a>
+            <a href="{% url 'home:crud_perfil' %}" class="btn btn-success">Editar mi perfil</a>
         </div>
     </div>
 </div>

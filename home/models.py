@@ -1,5 +1,6 @@
+from django.contrib.auth.models import User
 from django.db import models
-from django.contrib.auth.models import User 
+
 
 # Create your models here.
 class Categoria(models.Model):
@@ -7,40 +8,45 @@ class Categoria(models.Model):
         auto_created=True,
         primary_key=True,
         serialize=False,
-        verbose_name='ID',
+        verbose_name="ID",
     )
     nombre = models.CharField(max_length=60)
     createdat = models.DateTimeField(auto_now_add=True)
     updatedat = models.DateTimeField(null=True, blank=True)
     fk_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+
     class Meta:
         managed = True
-        db_table = 'categoria'
-        verbose_name_plural = 'Categorías'
+        db_table = "categoria"
+        verbose_name_plural = "Categorías"
+
+    def __str__(self):
+        return self.nombre
 
 
 class Archivo(models.Model):
     nombre = models.CharField(max_length=255)
     nombre_temporal = models.CharField(max_length=255)
-    ruta = models.FileField(upload_to='uploads/')
+    ruta = models.FileField(upload_to="uploads/")
     tipo = models.CharField(max_length=100, blank=True)
     tamano = models.PositiveIntegerField(default=0)
     fk_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     createdat = models.DateTimeField(auto_now_add=True)
+
     class Meta:
         managed = True
-        db_table = 'archivo'
-        verbose_name_plural = 'Archivos'
+        db_table = "archivo"
+        verbose_name_plural = "Archivos"
 
     def __str__(self):
         return self.nombre
 
     @property
-    def display_url(self): 
-        ruta = str(self.ruta) 
-        if ruta.startswith(('images/', 'css/', 'js/', 'fonts/', 'uploads/profile-default')): 
-            return f'/static/{ruta}' 
-        return self.ruta.url 
+    def display_url(self):
+        ruta = str(self.ruta)
+        if ruta.startswith(("images/", "css/", "js/", "fonts/", "uploads/profile-default")):
+            return f"/static/{ruta}"
+        return self.ruta.url
 
 
 class Perfil(models.Model):
@@ -51,20 +57,21 @@ class Perfil(models.Model):
 
     class Meta:
         managed = True
-        db_table = 'perfil'
-        verbose_name_plural = 'Perfiles'
-    
+        db_table = "perfil"
+        verbose_name_plural = "Perfiles"
+
     def __str__(self):
-        return f'Perfil de {self.user.username}'
+        return f"Perfil de {self.user.username}"
 
 
 class Publicacion(models.Model):
-    ESTADO_BORRADOR = 'borrador'
-    ESTADO_PUBLICADO = 'publicado'
+    ESTADO_BORRADOR = "borrador"
+    ESTADO_PUBLICADO = "publicado"
     ESTADOS = [
-        (ESTADO_BORRADOR, 'Borrador'),
-        (ESTADO_PUBLICADO, 'Publicado'),
+        (ESTADO_BORRADOR, "Borrador"),
+        (ESTADO_PUBLICADO, "Publicado"),
     ]
+
     titulo = models.CharField(max_length=180)
     resumen = models.TextField()
     contenido = models.TextField()
@@ -75,46 +82,57 @@ class Publicacion(models.Model):
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name='portadas',
+        related_name="portadas",
     )
     estado = models.CharField(max_length=20, choices=ESTADOS, default=ESTADO_BORRADOR)
     visitas = models.PositiveIntegerField(default=0)
     createdat = models.DateTimeField(auto_now_add=True)
     updatedat = models.DateTimeField(auto_now=True)
+
     class Meta:
         managed = True
-        db_table = 'publicacion'
-        verbose_name_plural = 'Publicaciones'
+        db_table = "publicacion"
+        verbose_name_plural = "Publicaciones"
+
+    def __str__(self):
+        return self.titulo
 
 
 class GaleriaPublicacion(models.Model):
-    publicacion = models.ForeignKey(Publicacion, on_delete=models.CASCADE, related_name='galeria')
+    publicacion = models.ForeignKey(Publicacion, on_delete=models.CASCADE, related_name="galeria")
     archivo = models.ForeignKey(Archivo, on_delete=models.CASCADE)
     createdat = models.DateTimeField(auto_now_add=True)
+
     class Meta:
         managed = True
-        db_table = 'galeria_publicacion'
-        verbose_name_plural = 'Galerias de publicaciones'
+        db_table = "galeria_publicacion"
+        verbose_name_plural = "Galerias de publicaciones"
+
+    def __str__(self):
+        return f"{self.publicacion.titulo} - {self.archivo.nombre}"
 
 
 class Comentario(models.Model):
-    ESTADO_PENDIENTE = 'pendiente'
-    ESTADO_APROBADO = 'aprobado'
-    ESTADO_BLOQUEADO = 'bloqueado'
+    ESTADO_PENDIENTE = "pendiente"
+    ESTADO_APROBADO = "aprobado"
+    ESTADO_BLOQUEADO = "bloqueado"
     ESTADOS = [
-        (ESTADO_PENDIENTE, 'Pendiente'),
-        (ESTADO_APROBADO, 'Aprobado'),
-        (ESTADO_BLOQUEADO, 'Bloqueado'),
+        (ESTADO_PENDIENTE, "Pendiente"),
+        (ESTADO_APROBADO, "Aprobado"),
+        (ESTADO_BLOQUEADO, "Bloqueado"),
     ]
-    publicacion = models.ForeignKey(Publicacion, on_delete=models.CASCADE, related_name='comentarios')
+
+    publicacion = models.ForeignKey(Publicacion, on_delete=models.CASCADE, related_name="comentarios")
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     contenido = models.TextField()
     estado = models.CharField(max_length=20, choices=ESTADOS, default=ESTADO_PENDIENTE)
     createdat = models.DateTimeField(auto_now_add=True)
     updatedat = models.DateTimeField(auto_now=True)
+
     class Meta:
         managed = True
-        db_table = 'comentario'
-        verbose_name_plural = 'Comentarios'
+        db_table = "comentario"
+        verbose_name_plural = "Comentarios"
 
-
+    def __str__(self):
+        return f"Comentario de {self.user.username} en {self.publicacion.titulo}"
