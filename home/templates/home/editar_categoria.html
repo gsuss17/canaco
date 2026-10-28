@@ -1,33 +1,78 @@
 {% extends 'partials/sidebar_base.html' %}
 {% load static %}
 
-{% block title %}Editar Categoria{% endblock title %}
+{% block title %}Editar Categoría - Canaco{% endblock title %}
 
 {% block content %}
-<div class="container mt-4">
-    <div class="card shadow rounded">
-        <div class="card-body">
-            <h3 class="mb-4 text-center">Editar Categoría</h3>
-            <form method="POST">
-                {% csrf_token %}
-                <div class="mb-3">
-                    <label for="nombre" class="form-label">Nombre</label>
-                    <input
-                        type="text"
-                        id="nombre"
-                        name="nombre"
-                        class="form-control"
-                        value="{{ categoria.nombre }}"
-                        required
-                    />
+<div class="row justify-content-center">
+    <div class="col-12 col-md-9 col-lg-7">
+        <div class="card border-0 shadow-sm rounded overflow-hidden">
+            <!-- Cabecera de la tarjeta -->
+            <div class="bg-dark text-white p-4">
+                <div class="d-flex align-items-center">
+                    <span class="d-inline-flex align-items-center justify-content-center rounded-circle bg-danger text-white mr-3" style="width: 44px; height: 44px; font-size: 18px;">
+                        <i class="fas fa-edit"></i>
+                    </span>
+                    <div>
+                        <h4 class="font-weight-bold mb-1 text-white">Editar Categoría</h4>
+                        <p class="text-white-50 mb-0" style="font-size: 13px;">Actualiza el nombre identificador de esta sección</p>
+                    </div>
                 </div>
-                <div class="d-grid gap-2">
-                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
-                    <a href="{% url 'home:crud_categorias' %}" class="btn btn-outline-secondary">
-                        Cancelar
-                    </a>
-                </div>
-            </form>
+            </div>
+
+            <!-- Cuerpo del formulario -->
+            <div class="card-body p-4 bg-white">
+                <!-- Django Messages -->
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show mb-3" role="alert" style="font-size: 13px;">
+                            {{ message }}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Cerrar">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                <form method="POST">
+                    {% csrf_token %}
+
+                    <div class="form-group mb-4">
+                        <label for="nombre" class="font-weight-500 text-dark" style="font-size: 14px;">Nombre de la categoría <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text bg-light border-right-0 text-muted">
+                                    <i class="fas fa-tag"></i>
+                                </span>
+                            </div>
+                            <input
+                                type="text"
+                                id="nombre"
+                                name="nombre"
+                                class="form-control border-left-0"
+                                value="{{ categoria.nombre }}"
+                                placeholder="Nombre descriptivo"
+                                required
+                                autofocus
+                            />
+                        </div>
+                        <small class="form-text text-muted">Este nombre se mostrará en los menús, etiquetas y filtros de noticias.</small>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="col-sm-6 mb-2 mb-sm-0">
+                            <button type="submit" class="btn btn-danger btn-block font-weight-bold py-2 shadow-sm">
+                                <i class="fas fa-save mr-1"></i> Guardar Cambios
+                            </button>
+                        </div>
+                        <div class="col-sm-6">
+                            <a href="{% url 'home:crud_categorias' %}" class="btn btn-outline-secondary btn-block font-weight-bold py-2">
+                                <i class="fas fa-times mr-1"></i> Cancelar
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </div>

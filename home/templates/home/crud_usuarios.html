@@ -1,101 +1,139 @@
 {% extends 'partials/sidebar_base.html' %}
 {% load static %}
 
-{% block title %}Usuarios{% endblock title %}
+{% block title %}Gestión de Usuarios - Canaco{% endblock title %}
 
 {% block content %}
-<div class="container mt-2">
-    <div class="d-flex align-items-center justify-content-between mb-4">
-        <div>
-            <h1 class="mb-1">Gestión de usuarios</h1>
-            <p class="text-muted mb-0">Crear, editar, bloquear o eliminar cuentas del sistema.</p>
+<div class="card border-0 shadow-sm rounded overflow-hidden w-100">
+    <!-- Cabecera de la tarjeta -->
+    <div class="bg-dark text-white p-3 p-md-4">
+        <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center">
+            <div>
+                <h4 class="font-weight-bold mb-1 text-white">Gestión de Usuarios</h4>
+                <p class="text-white-50 mb-0" style="font-size: 13px;">Crear, editar, bloquear o eliminar cuentas del sistema</p>
+            </div>
+            <div class="mt-3 mt-sm-0">
+                <a href="{% url 'home:crear_usuario' %}" class="btn btn-sm btn-danger font-weight-bold px-3 shadow-sm text-nowrap">
+                    <i class="fas fa-user-plus mr-1"></i> Crear usuario
+                </a>
+            </div>
         </div>
-        <a href="{% url 'home:crear_usuario' %}" class="btn btn-primary">
-            <i class="bi bi-plus-circle me-1"></i> Crear usuario
-        </a>
     </div>
 
-    {% if messages %}
-        {% for message in messages %}
-            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                {{ message }}
-                <button
-                    type="button"
-                    class="btn-close"
-                    data-bs-dismiss="alert"
-                    aria-label="Cerrar"
-                ></button>
-            </div>
-        {% endfor %}
-    {% endif %}
-
-    <div class="table-responsive">
-        <table class="table table-striped table-hover align-middle">
-            <thead class="table-dark">
-                <tr>
-                    <th>#</th>
-                    <th>Usuario</th>
-                    <th>Nombre</th>
-                    <th>Correo</th>
-                    <th>Rol</th>
-                    <th>Estado</th>
-                    <th colspan="3"></th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for user in usuarios %}
-                    <tr>
-                        <td>{{ forloop.counter }}</td>
-                        <td>{{ user.username }}</td>
-                        <td>{{ user.first_name|default:"-" }}</td>
-                        <td>{{ user.email|default:"-" }}</td>
-                        <td>
-                            {% if user.is_superuser %}
-                                Administrador
-                            {% elif user.is_staff %}
-                                Editor
-                            {% else %}
-                                Colaborador
-                            {% endif %}
-                        </td>
-                        <td>
-                            {% if user.is_active %}
-                                <span class="badge bg-success">Activo</span>
-                            {% else %}
-                                <span class="badge bg-danger">Bloqueado</span>
-                            {% endif %}
-                        </td>
-                        <td>
-                            <a href="{% url 'home:editar_usuario' user.id %}" class="btn btn-info btn-sm">
-                                Editar
-                            </a>
-                        </td>
-                        <td>
-                            <a
-                                href="{% url 'home:bloquear_usuario' user.id %}"
-                                class="btn btn-warning btn-sm"
-                            >
-                                {% if user.is_active %}
-                                    Bloquear
-                                {% else %}
-                                    Desbloquear
-                                {% endif %}
-                            </a>
-                        </td>
-                        <td>
-                            <form method="post" action="{% url 'home:eliminar_usuario' user.id %}">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
-                            </form>
-                        </td>
-                    </tr>
-                {% empty %}
-                    <tr>
-                        <td colspan="9" class="text-center">No hay usuarios registrados.</td>
-                    </tr>
+    <!-- Cuerpo: Mensajes y Tabla -->
+    <div class="card-body p-0 bg-white">
+        <!-- Django Messages -->
+        {% if messages %}
+            <div class="p-3">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show mb-2" role="alert" style="font-size: 13px;">
+                        {{ message }}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Cerrar">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
                 {% endfor %}
-            </tbody>
-        </table>
+            </div>
+        {% endif %}
+
+        <div class="table-responsive">
+            <table class="table table-hover mb-0" style="font-size: 13px;">
+                <thead class="thead-light">
+                    <tr>
+                        <th class="border-top-0 pl-4 text-center" style="width: 50px;">#</th>
+                        <th class="border-top-0 text-nowrap">Usuario</th>
+                        <th class="border-top-0">Nombre Completo</th>
+                        <th class="border-top-0">Correo Electrónico</th>
+                        <th class="border-top-0 text-center text-nowrap">Rol</th>
+                        <th class="border-top-0 text-center text-nowrap">Estado</th>
+                        <th class="border-top-0 text-right pr-4 text-nowrap">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in usuarios %}
+                        <tr>
+                            <!-- Índice -->
+                            <td class="align-middle pl-4 text-center text-muted font-weight-bold">
+                                {{ forloop.counter }}
+                            </td>
+
+                            <!-- Usuario -->
+                            <td class="align-middle font-weight-bold text-dark text-nowrap">
+                                <i class="fas fa-user-circle text-muted mr-1"></i>{{ user.username }}
+                            </td>
+
+                            <!-- Nombre -->
+                            <td class="align-middle text-dark">
+                                {{ user.first_name|default:"-" }}
+                            </td>
+
+                            <!-- Correo -->
+                            <td class="align-middle text-muted">
+                                {{ user.email|default:"-" }}
+                            </td>
+
+                            <!-- Rol -->
+                            <td class="align-middle text-center text-nowrap">
+                                {% if user.is_superuser %}
+                                    <span class="badge badge-danger px-2 py-1">Administrador</span>
+                                {% elif user.is_staff %}
+                                    <span class="badge badge-info px-2 py-1">Editor</span>
+                                {% else %}
+                                    <span class="badge badge-secondary px-2 py-1">Colaborador</span>
+                                {% endif %}
+                            </td>
+
+                            <!-- Estado -->
+                            <td class="align-middle text-center text-nowrap">
+                                {% if user.is_active %}
+                                    <span class="badge badge-success px-2 py-1">Activo</span>
+                                {% else %}
+                                    <span class="badge badge-danger px-2 py-1">Bloqueado</span>
+                                {% endif %}
+                            </td>
+
+                            <!-- Acciones -->
+                            <td class="align-middle text-right pr-4 text-nowrap">
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <!-- Editar -->
+                                    <a href="{% url 'home:editar_usuario' user.id %}" class="btn btn-outline-info" title="Editar usuario">
+                                        <i class="fas fa-user-edit"></i>
+                                    </a>
+
+                                    <!-- Bloquear / Desbloquear -->
+                                    <a
+                                        href="{% url 'home:bloquear_usuario' user.id %}"
+                                        class="btn {% if user.is_active %}btn-outline-warning{% else %}btn-outline-success{% endif %}"
+                                        title="{% if user.is_active %}Bloquear acceso{% else %}Desbloquear acceso{% endif %}"
+                                    >
+                                        {% if user.is_active %}
+                                            <i class="fas fa-user-slash"></i>
+                                        {% else %}
+                                            <i class="fas fa-user-check"></i>
+                                        {% endif %}
+                                    </a>
+
+                                    <!-- Eliminar -->
+                                    <form method="post" action="{% url 'home:eliminar_usuario' user.id %}" class="d-inline" onsubmit="return confirm('¿Seguro que deseas eliminar al usuario &quot;{{ user.username }}&quot;?');">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-outline-danger btn-sm rounded-0 rounded-right" title="Eliminar usuario">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="7" class="text-center py-5 text-muted">
+                                <i class="fas fa-users-slash fa-2x mb-2 d-block"></i>
+                                No hay usuarios registrados en el sistema.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 {% endblock content %}

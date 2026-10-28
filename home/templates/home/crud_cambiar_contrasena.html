@@ -1,54 +1,125 @@
 {% extends 'partials/sidebar_base.html' %}
 {% load static %}
 
-{% block title %}Cambiar Contraseña{% endblock title %}
+{% block title %}Cambiar Contraseña - Canaco{% endblock title %}
 
 {% block content %}
-<div class="profile-page">
-    <div class="profile-edit-card">
-        <h3>Cambiar contraseña</h3>
-        <p>
-            Esta acción modifica la contraseña de tu cuenta actual:
-            <strong>{{ request.user.username }}</strong>.
-        </p>
-
-        {% if messages %}
-            {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                    {{ message }}
-                    <button
-                        type="button"
-                        class="btn-close"
-                        data-bs-dismiss="alert"
-                        aria-label="Cerrar"
-                    ></button>
+<div class="row justify-content-center">
+    <div class="col-12 col-md-9 col-lg-8">
+        <div class="card border-0 shadow-sm rounded overflow-hidden">
+            <!-- Cabecera de la tarjeta -->
+            <div class="bg-dark text-white p-4">
+                <div class="d-flex align-items-center">
+                    <span class="d-inline-flex align-items-center justify-content-center rounded-circle bg-danger text-white mr-3" style="width: 44px; height: 44px; font-size: 18px;">
+                        <i class="fas fa-key"></i>
+                    </span>
+                    <div>
+                        <h4 class="font-weight-bold mb-1 text-white">Cambiar Contraseña</h4>
+                        <p class="text-white-50 mb-0" style="font-size: 13px;">
+                            Actualizando credenciales de seguridad para la cuenta: <strong class="text-white">{{ request.user.username }}</strong>
+                        </p>
+                    </div>
                 </div>
-            {% endfor %}
-        {% endif %}
-
-        <form method="POST" class="profile-edit-form">
-            {% csrf_token %}
-
-            <div class="profile-form-row">
-                <label for="actual">Contraseña actual</label>
-                <input type="password" id="actual" name="actual" required />
             </div>
 
-            <div class="profile-form-row">
-                <label for="nueva">Nueva contraseña</label>
-                <input type="password" id="nueva" name="nueva" required />
-            </div>
+            <!-- Cuerpo del formulario -->
+            <div class="card-body p-4 bg-white">
+                <!-- Django Messages -->
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show mb-3" role="alert" style="font-size: 13px;">
+                            {{ message }}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Cerrar">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
 
-            <div class="profile-form-row">
-                <label for="confirmar">Confirmar contraseña</label>
-                <input type="password" id="confirmar" name="confirmar" required />
-            </div>
+                <form method="POST">
+                    {% csrf_token %}
 
-            <div class="profile-form-actions">
-                <button type="submit" class="btn btn-primary">Actualizar contraseña</button>
-                <a href="{% url 'home:perfil' %}" class="btn btn-outline-secondary">Volver a mi perfil</a>
+                    <!-- Contraseña Actual -->
+                    <div class="form-group mb-3">
+                        <label for="actual" class="font-weight-500 text-dark" style="font-size: 13px;">
+                            Contraseña actual <span class="text-danger">*</span>
+                        </label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text bg-light border-right-0 text-muted"><i class="fas fa-unlock-alt"></i></span>
+                            </div>
+                            <input
+                                type="password"
+                                id="actual"
+                                name="actual"
+                                class="form-control border-left-0"
+                                placeholder="Ingresa tu contraseña vigente"
+                                required
+                                autofocus
+                            />
+                        </div>
+                    </div>
+
+                    <hr class="my-3">
+
+                    <!-- Nueva Contraseña -->
+                    <div class="form-group mb-3">
+                        <label for="nueva" class="font-weight-500 text-dark" style="font-size: 13px;">
+                            Nueva contraseña <span class="text-danger">*</span>
+                        </label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text bg-light border-right-0 text-muted"><i class="fas fa-lock"></i></span>
+                            </div>
+                            <input
+                                type="password"
+                                id="nueva"
+                                name="nueva"
+                                class="form-control border-left-0"
+                                placeholder="Mínimo 8 caracteres"
+                                required
+                            />
+                        </div>
+                    </div>
+
+                    <!-- Confirmar Contraseña -->
+                    <div class="form-group mb-4">
+                        <label for="confirmar" class="font-weight-500 text-dark" style="font-size: 13px;">
+                            Confirmar nueva contraseña <span class="text-danger">*</span>
+                        </label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text bg-light border-right-0 text-muted"><i class="fas fa-check-circle"></i></span>
+                            </div>
+                            <input
+                                type="password"
+                                id="confirmar"
+                                name="confirmar"
+                                class="form-control border-left-0"
+                                placeholder="Repite la nueva contraseña"
+                                required
+                            />
+                        </div>
+                    </div>
+
+                    <!-- Botones de Acción -->
+                    <div class="pt-3 border-top mt-3">
+                        <div class="form-row">
+                            <div class="col-sm-6 mb-2 mb-sm-0">
+                                <button type="submit" class="btn btn-danger btn-block font-weight-bold py-2 shadow-sm">
+                                    <i class="fas fa-save mr-1"></i> Actualizar contraseña
+                                </button>
+                            </div>
+                            <div class="col-sm-6">
+                                <a href="{% url 'home:perfil' %}" class="btn btn-outline-secondary btn-block font-weight-bold py-2">
+                                    <i class="fas fa-arrow-left mr-1"></i> Volver a mi perfil
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
             </div>
-        </form>
+        </div>
     </div>
 </div>
 {% endblock content %}

@@ -1,105 +1,169 @@
 {% extends 'partials/sidebar_base.html' %}
 {% load static %}
 
-{% block title %}Editar Mi Perfil{% endblock title %}
+{% block title %}Editar Mi Perfil - Canaco{% endblock title %}
 
 {% block content %}
-<div class="profile-page">
-    <div class="profile-edit-card">
-        <h3>Editar mi perfil</h3>
-        <p>
-            Estos datos pertenecen a tu cuenta actual: <strong>{{ request.user.username }}</strong>.
-        </p>
-
-        {% if messages %}
-            {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                    {{ message }}
-                    <button
-                        type="button"
-                        class="btn-close"
-                        data-bs-dismiss="alert"
-                        aria-label="Cerrar"
-                    ></button>
+<div class="row justify-content-center">
+    <div class="col-12 col-xl-10">
+        <div class="card border-0 shadow-sm rounded overflow-hidden">
+            <!-- Cabecera de la tarjeta -->
+            <div class="bg-dark text-white p-4">
+                <div class="d-flex align-items-center">
+                    <span class="d-inline-flex align-items-center justify-content-center rounded-circle bg-danger text-white mr-3" style="width: 44px; height: 44px; font-size: 18px;">
+                        <i class="fas fa-user-edit"></i>
+                    </span>
+                    <div>
+                        <h4 class="font-weight-bold mb-1 text-white">Editar Mi Perfil</h4>
+                        <p class="text-white-50 mb-0" style="font-size: 13px;">
+                            Actualiza tus datos personales y fotografía de la cuenta: <strong class="text-white">{{ request.user.username }}</strong>
+                        </p>
+                    </div>
                 </div>
-            {% endfor %}
-        {% endif %}
+            </div>
 
-        <div class="profile-photo-wrap mb-4">
-            {% if perfil_usuario.foto_perfil %}
-                <img
-                    src="{{ perfil_usuario.foto_perfil.display_url }}"
-                    alt="Foto de perfil"
-                    class="profile-photo profile-photo-sm"
-                />
-            {% else %}
-                <img
-                    src="{% static 'uploads/profile-default.jpg' %}"
-                    alt="Foto de perfil"
-                    class="profile-photo profile-photo-sm"
-                />
-            {% endif %}
+            <!-- Cuerpo del formulario -->
+            <div class="card-body p-4 bg-white">
+                <!-- Django Messages -->
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show mb-3" role="alert" style="font-size: 13px;">
+                            {{ message }}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Cerrar">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    <!-- Sección: Foto de Perfil Actual y Carga -->
+                    <div class="d-flex flex-column flex-sm-row align-items-center p-3 mb-4 bg-light rounded border">
+                        <div class="mr-sm-4 mb-3 mb-sm-0 text-center">
+                            {% if perfil_usuario.foto_perfil %}
+                                <img
+                                    src="{{ perfil_usuario.foto_perfil.display_url }}"
+                                    alt="Foto de perfil actual"
+                                    class="rounded-circle shadow-sm"
+                                    style="width: 90px; height: 90px; object-fit: cover; border: 3px solid #fff;"
+                                />
+                            {% else %}
+                                <img
+                                    src="{% static 'uploads/profile-default.jpg' %}"
+                                    alt="Foto por defecto"
+                                    class="rounded-circle shadow-sm"
+                                    style="width: 90px; height: 90px; object-fit: cover; border: 3px solid #fff;"
+                                />
+                            {% endif %}
+                        </div>
+                        <div class="flex-grow-1 w-100 text-center text-sm-left">
+                            <label for="foto" class="font-weight-bold text-dark d-block mb-1" style="font-size: 14px;">
+                                <i class="fas fa-camera mr-1 text-danger"></i> Cambiar fotografía
+                            </label>
+                            <input type="file" id="foto" name="foto" class="form-control-file border bg-white rounded p-2" accept="image/*" />
+                            <small class="text-muted d-block mt-1">Formato sugerido: JPG o PNG cuadrado.</small>
+                        </div>
+                    </div>
+
+                    <!-- Fila 1: Usuario y Correo -->
+                    <div class="form-row">
+                        <div class="form-group col-md-6 mb-3">
+                            <label for="username" class="font-weight-500 text-dark" style="font-size: 13px;">
+                                Nombre de usuario <span class="text-danger">*</span>
+                            </label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text bg-light border-right-0 text-muted"><i class="fas fa-user"></i></span>
+                                </div>
+                                <input
+                                    type="text"
+                                    id="username"
+                                    name="username"
+                                    class="form-control border-left-0"
+                                    value="{{ request.user.username }}"
+                                    placeholder="Usuario"
+                                    required
+                                />
+                            </div>
+                        </div>
+
+                        <div class="form-group col-md-6 mb-3">
+                            <label for="email" class="font-weight-500 text-dark" style="font-size: 13px;">
+                                Correo electrónico
+                            </label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text bg-light border-right-0 text-muted"><i class="fas fa-envelope"></i></span>
+                                </div>
+                                <input
+                                    type="email"
+                                    id="email"
+                                    name="email"
+                                    class="form-control border-left-0"
+                                    value="{{ request.user.email }}"
+                                    placeholder="correo@ejemplo.com"
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Fila 2: Datos Personales (Nombre, Paterno, Materno) -->
+                    <div class="form-row">
+                        <div class="form-group col-md-4 mb-3">
+                            <label for="first_name" class="font-weight-500 text-dark" style="font-size: 13px;">Nombre(s)</label>
+                            <input
+                                type="text"
+                                id="first_name"
+                                name="first_name"
+                                class="form-control"
+                                value="{{ request.user.first_name }}"
+                                placeholder="Tu nombre"
+                            />
+                        </div>
+                        <div class="form-group col-md-4 mb-3">
+                            <label for="apellido_paterno" class="font-weight-500 text-dark" style="font-size: 13px;">Apellido Paterno</label>
+                            <input
+                                type="text"
+                                id="apellido_paterno"
+                                name="apellido_paterno"
+                                class="form-control"
+                                value="{{ perfil_usuario.apellido_paterno }}"
+                                placeholder="Primer apellido"
+                            />
+                        </div>
+                        <div class="form-group col-md-4 mb-3">
+                            <label for="apellido_materno" class="font-weight-500 text-dark" style="font-size: 13px;">Apellido Materno</label>
+                            <input
+                                type="text"
+                                id="apellido_materno"
+                                name="apellido_materno"
+                                class="form-control"
+                                value="{{ perfil_usuario.apellido_materno }}"
+                                placeholder="Segundo apellido"
+                            />
+                        </div>
+                    </div>
+
+                    <!-- Botones de Acción -->
+                    <div class="pt-3 border-top mt-4">
+                        <div class="form-row">
+                            <div class="col-sm-6 mb-2 mb-sm-0">
+                                <button type="submit" class="btn btn-danger btn-block font-weight-bold py-2 shadow-sm">
+                                    <i class="fas fa-save mr-1"></i> Guardar cambios
+                                </button>
+                            </div>
+                            <div class="col-sm-6">
+                                <a href="{% url 'home:perfil' %}" class="btn btn-outline-secondary btn-block font-weight-bold py-2">
+                                    <i class="fas fa-arrow-left mr-1"></i> Cancelar
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
         </div>
-
-        <form method="POST" enctype="multipart/form-data" class="profile-edit-form">
-            {% csrf_token %}
-
-            <div class="profile-form-row">
-                <label for="username">Usuario</label>
-                <input
-                    type="text"
-                    id="username"
-                    name="username"
-                    value="{{ request.user.username }}"
-                    required
-                />
-            </div>
-
-            <div class="profile-form-row">
-                <label for="email">Correo</label>
-                <input type="email" id="email" name="email" value="{{ request.user.email }}" />
-            </div>
-
-            <div class="profile-form-row">
-                <label for="first_name">Nombre</label>
-                <input
-                    type="text"
-                    id="first_name"
-                    name="first_name"
-                    value="{{ request.user.first_name }}"
-                />
-            </div>
-
-            <div class="profile-form-row">
-                <label for="apellido_paterno">Paterno</label>
-                <input
-                    type="text"
-                    id="apellido_paterno"
-                    name="apellido_paterno"
-                    value="{{ perfil_usuario.apellido_paterno }}"
-                />
-            </div>
-
-            <div class="profile-form-row">
-                <label for="apellido_materno">Materno</label>
-                <input
-                    type="text"
-                    id="apellido_materno"
-                    name="apellido_materno"
-                    value="{{ perfil_usuario.apellido_materno }}"
-                />
-            </div>
-
-            <div class="profile-form-row">
-                <label for="foto">Foto</label>
-                <input type="file" id="foto" name="foto" />
-            </div>
-
-            <div class="profile-form-actions">
-                <button type="submit" class="btn btn-primary">Guardar cambios</button>
-                <a href="{% url 'home:perfil' %}" class="btn btn-outline-secondary">Cancelar</a>
-            </div>
-        </form>
     </div>
 </div>
 {% endblock content %}
