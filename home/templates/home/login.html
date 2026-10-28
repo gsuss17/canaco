@@ -1,57 +1,121 @@
 {% extends 'partials/base.html' %}
 {% load static %}
 
-{% block title %}Iniciar Sesión{% endblock title %}
+{% block title %}Iniciar Sesión - Canaco{% endblock title %}
 
 {% block content %}
-<div class="account-page">
-    <div class="account-card account-card-sm">
-        <h3>Iniciar sesión</h3>
-
-        {% if form.errors %}
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                Usuario o contraseña incorrectos.
-                <button
-                    type="button"
-                    class="btn-close"
-                    data-bs-dismiss="alert"
-                    aria-label="Cerrar"
-                ></button>
-            </div>
-        {% endif %}
-
-        {% if messages %}
-            {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                    {{ message }}
-                    <button
-                        type="button"
-                        class="btn-close"
-                        data-bs-dismiss="alert"
-                        aria-label="Cerrar"
-                    ></button>
-                </div>
-            {% endfor %}
-        {% endif %}
-
-        <form method="POST" class="profile-edit-form">
-            {% csrf_token %}
-
-            <div class="profile-form-row">
-                <label for="username">Usuario</label>
-                <input type="text" id="username" name="username" required />
-            </div>
-
-            <div class="profile-form-row">
-                <label for="password">Contraseña</label>
-                <input type="password" id="password" name="password" required />
-            </div>
-
-            <div class="profile-form-actions">
-                <button type="submit" class="btn btn-primary">Ingresar</button>
-                <a href="{% url 'home:sign_up' %}" class="btn btn-outline-secondary">Crear cuenta</a>
-            </div>
-        </form>
+<!-- Breadcrumb Start -->
+<div class="breadcrumb-wrap py-3 bg-light border-bottom mb-4">
+    <div class="container">
+        <ul class="breadcrumb mb-0 bg-transparent p-0" style="font-size: 14px;">
+            <li class="breadcrumb-item"><a href="{% url 'home:index' %}">Inicio</a></li>
+            <li class="breadcrumb-item active">Iniciar sesión</li>
+        </ul>
     </div>
 </div>
+<!-- Breadcrumb End -->
+
+<!-- Login Section Start -->
+<div class="login-section py-4 my-3">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-7 col-lg-5">
+                <div class="card border-0 shadow-sm rounded overflow-hidden">
+                    <!-- Cabecera de la tarjeta -->
+                    <div class="bg-dark text-white p-4 text-center">
+                        <div class="mb-2">
+                            <span class="d-inline-flex align-items-center justify-content-center rounded-circle bg-danger text-white" style="width: 52px; height: 52px; font-size: 22px;">
+                                <i class="fas fa-user-lock"></i>
+                            </span>
+                        </div>
+                        <h4 class="font-weight-bold mb-1 text-white">Iniciar Sesión</h4>
+                        <p class="text-white-50 mb-0" style="font-size: 13px;">Ingresa tus credenciales para acceder</p>
+                    </div>
+
+                    <!-- Cuerpo del formulario -->
+                    <div class="card-body p-4 bg-white">
+                        <!-- Django Form Errors -->
+                        {% if form.errors %}
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert" style="font-size: 13px;">
+                                <i class="fas fa-exclamation-circle mr-1"></i> Usuario o contraseña incorrectos.
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Cerrar">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        {% endif %}
+
+                        <!-- Django Messages -->
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert" style="font-size: 13px;">
+                                    {{ message }}
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Cerrar">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+
+                        <form method="POST">
+                            {% csrf_token %}
+
+                            <div class="form-group mb-3">
+                                <label for="username" class="font-weight-500 text-dark" style="font-size: 14px;">Usuario</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text bg-light border-right-0 text-muted">
+                                            <i class="fas fa-user"></i>
+                                        </span>
+                                    </div>
+                                    <input
+                                        type="text"
+                                        id="username"
+                                        name="username"
+                                        class="form-control border-left-0"
+                                        placeholder="Ingresa tu usuario"
+                                        required
+                                        autofocus
+                                    />
+                                </div>
+                            </div>
+
+                            <div class="form-group mb-4">
+                                <label for="password" class="font-weight-500 text-dark" style="font-size: 14px;">Contraseña</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text bg-light border-right-0 text-muted">
+                                            <i class="fas fa-key"></i>
+                                        </span>
+                                    </div>
+                                    <input
+                                        type="password"
+                                        id="password"
+                                        name="password"
+                                        class="form-control border-left-0"
+                                        placeholder="Ingresa tu contraseña"
+                                        required
+                                    />
+                                </div>
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <button type="submit" class="btn btn-danger btn-block font-weight-bold py-2 shadow-sm">
+                                    <i class="fas fa-sign-in-alt mr-2"></i>Ingresar
+                                </button>
+                            </div>
+
+                            <div class="text-center mt-3 pt-3 border-top" style="font-size: 14px;">
+                                <span class="text-muted">¿Aún no tienes una cuenta?</span>
+                                <a href="{% url 'home:sign_up' %}" class="text-danger font-weight-bold ml-1">
+                                    Regístrate aquí
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Login Section End -->
 {% endblock content %}

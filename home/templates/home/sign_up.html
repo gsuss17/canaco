@@ -1,71 +1,140 @@
 {% extends 'partials/base.html' %}
 {% load static %}
 
-{% block title %}Crear Cuenta{% endblock title %}
+{% block title %}Crear Cuenta - Canaco{% endblock title %}
 
 {% block content %}
-<div class="account-page">
-    <div class="account-card">
-        <h3>Crear una cuenta</h3>
-        <p>Estos datos serán guardados en tu perfil.</p>
-
-        {% if messages %}
-            {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                    {{ message }}
-                    <button
-                        type="button"
-                        class="btn-close"
-                        data-bs-dismiss="alert"
-                        aria-label="Cerrar"
-                    ></button>
-                </div>
-            {% endfor %}
-        {% endif %}
-
-        <form method="POST" class="profile-edit-form">
-            {% csrf_token %}
-
-            <div class="profile-form-row">
-                <label for="username">Usuario</label>
-                <input type="text" id="username" name="username" required />
-            </div>
-
-            <div class="profile-form-row">
-                <label for="email">Correo</label>
-                <input type="email" id="email" name="email" required />
-            </div>
-
-            <div class="profile-form-row">
-                <label for="first_name">Nombre</label>
-                <input type="text" id="first_name" name="first_name" />
-            </div>
-
-            <div class="profile-form-row">
-                <label for="apellido_paterno">Paterno</label>
-                <input type="text" id="apellido_paterno" name="apellido_paterno" />
-            </div>
-
-            <div class="profile-form-row">
-                <label for="apellido_materno">Materno</label>
-                <input type="text" id="apellido_materno" name="apellido_materno" />
-            </div>
-
-            <div class="profile-form-row">
-                <label for="password1">Contraseña</label>
-                <input type="password" id="password1" name="password1" required />
-            </div>
-
-            <div class="profile-form-row">
-                <label for="password2">Confirmar</label>
-                <input type="password" id="password2" name="password2" required />
-            </div>
-
-            <div class="profile-form-actions">
-                <button type="submit" class="btn btn-success">Registrarse</button>
-                <a href="{% url 'home:login' %}" class="btn btn-outline-secondary">Ya tengo cuenta</a>
-            </div>
-        </form>
+<!-- Breadcrumb Start -->
+<div class="breadcrumb-wrap py-3 bg-light border-bottom mb-4">
+    <div class="container">
+        <ul class="breadcrumb mb-0 bg-transparent p-0" style="font-size: 14px;">
+            <li class="breadcrumb-item"><a href="{% url 'home:index' %}">Inicio</a></li>
+            <li class="breadcrumb-item active">Registro de usuario</li>
+        </ul>
     </div>
 </div>
+<!-- Breadcrumb End -->
+
+<!-- Sign Up Section Start -->
+<div class="signup-section py-4 my-2">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-9 col-lg-7">
+                <div class="card border-0 shadow-sm rounded overflow-hidden">
+                    <!-- Cabecera de la tarjeta -->
+                    <div class="bg-dark text-white p-4 text-center">
+                        <div class="mb-2">
+                            <span class="d-inline-flex align-items-center justify-content-center rounded-circle bg-danger text-white" style="width: 52px; height: 52px; font-size: 22px;">
+                                <i class="fas fa-user-plus"></i>
+                            </span>
+                        </div>
+                        <h4 class="font-weight-bold mb-1 text-white">Crear una cuenta</h4>
+                        <p class="text-white-50 mb-0" style="font-size: 13px;">Completa el formulario para registrarte en la plataforma</p>
+                    </div>
+
+                    <!-- Cuerpo del formulario -->
+                    <div class="card-body p-4 bg-white">
+                        <!-- Django Messages -->
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert" style="font-size: 13px;">
+                                    {{ message }}
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Cerrar">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+
+                        <form method="POST">
+                            {% csrf_token %}
+
+                            <!-- Fila: Usuario y Correo -->
+                            <div class="form-row">
+                                <div class="form-group col-md-6 mb-3">
+                                    <label for="username" class="font-weight-500 text-dark" style="font-size: 13px;">Usuario <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text bg-light border-right-0 text-muted"><i class="fas fa-user"></i></span>
+                                        </div>
+                                        <input type="text" id="username" name="username" class="form-control border-left-0" placeholder="Nombre de usuario" required autofocus />
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-6 mb-3">
+                                    <label for="email" class="font-weight-500 text-dark" style="font-size: 13px;">Correo electrónico <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text bg-light border-right-0 text-muted"><i class="fas fa-envelope"></i></span>
+                                        </div>
+                                        <input type="email" id="email" name="email" class="form-control border-left-0" placeholder="correo@ejemplo.com" required />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Fila: Nombre -->
+                            <div class="form-group mb-3">
+                                <label for="first_name" class="font-weight-500 text-dark" style="font-size: 13px;">Nombre(s)</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text bg-light border-right-0 text-muted"><i class="fas fa-id-card"></i></span>
+                                    </div>
+                                    <input type="text" id="first_name" name="first_name" class="form-control border-left-0" placeholder="Tu nombre" />
+                                </div>
+                            </div>
+
+                            <!-- Fila: Apellidos -->
+                            <div class="form-row">
+                                <div class="form-group col-md-6 mb-3">
+                                    <label for="apellido_paterno" class="font-weight-500 text-dark" style="font-size: 13px;">Apellido Paterno</label>
+                                    <input type="text" id="apellido_paterno" name="apellido_paterno" class="form-control" placeholder="Primer apellido" />
+                                </div>
+                                <div class="form-group col-md-6 mb-3">
+                                    <label for="apellido_materno" class="font-weight-500 text-dark" style="font-size: 13px;">Apellido Materno</label>
+                                    <input type="text" id="apellido_materno" name="apellido_materno" class="form-control" placeholder="Segundo apellido" />
+                                </div>
+                            </div>
+
+                            <!-- Fila: Contraseñas -->
+                            <div class="form-row">
+                                <div class="form-group col-md-6 mb-3">
+                                    <label for="password1" class="font-weight-500 text-dark" style="font-size: 13px;">Contraseña <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text bg-light border-right-0 text-muted"><i class="fas fa-lock"></i></span>
+                                        </div>
+                                        <input type="password" id="password1" name="password1" class="form-control border-left-0" placeholder="Mínimo 8 caracteres" required />
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-6 mb-4">
+                                    <label for="password2" class="font-weight-500 text-dark" style="font-size: 13px;">Confirmar Contraseña <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text bg-light border-right-0 text-muted"><i class="fas fa-check-circle"></i></span>
+                                        </div>
+                                        <input type="password" id="password2" name="password2" class="form-control border-left-0" placeholder="Repite la contraseña" required />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Acciones -->
+                            <div class="form-group mb-3">
+                                <button type="submit" class="btn btn-danger btn-block font-weight-bold py-2 shadow-sm">
+                                    <i class="fas fa-user-check mr-2"></i>Registrarse
+                                </button>
+                            </div>
+
+                            <div class="text-center mt-3 pt-3 border-top" style="font-size: 14px;">
+                                <span class="text-muted">¿Ya tienes una cuenta registrada?</span>
+                                <a href="{% url 'home:login' %}" class="text-danger font-weight-bold ml-1">
+                                    Inicia sesión aquí
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Sign Up Section End -->
 {% endblock content %}

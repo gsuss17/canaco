@@ -1,127 +1,187 @@
 {% extends 'partials/base.html' %}
 {% load static %}
 
-{% block title %}Inicio{% endblock title %}
+{% block title %}Inicio - Canaco{% endblock title %}
 
 {% block content %}
+    <!-- ==================== TOP HERO / DESTACADAS ==================== -->
     {% if slider %}
-        <section class="home-carousel-section bg-light">
-            <div id="homeCarousel" class="carousel slide home-carousel" data-bs-ride="carousel">
-                <div class="carousel-indicators">
-                    {% for noticia in slider %}
-                        <button
-                            type="button"
-                            data-bs-target="#homeCarousel"
-                            data-bs-slide-to="{{ forloop.counter0 }}"
-                            class="{% if forloop.first %}active{% endif %}"
-                            aria-current="{% if forloop.first %}true{% endif %}"
-                            aria-label="Noticia {{ forloop.counter }}"
-                        ></button>
-                    {% endfor %}
-                </div>
-                <div class="carousel-inner">
-                    {% for noticia in slider %}
-                        <div class="carousel-item {% if forloop.first %}active{% endif %}" data-bs-interval="4500">
-                            <a href="{% url 'home:noticia_detalle' noticia.id %}" class="homecarousel-link">
-                                {% if noticia.imagen_portada %}
-                                    <img
-                                        src="{{ noticia.imagen_portada.display_url }}"
-                                        class="d-block w-100 home-carousel-image"
-                                        style="height: 400px; object-fit: cover; object-position: center;"
-                                        alt="{{ noticia.titulo }}"
-                                    />
-                                {% else %}
-                                    <img
-                                        src="{% static 'images/hero_1.jpg' %}"
-                                        class="d-block w-100 home-carousel-image"
-                                        style="height: 400px; object-fit: cover; object-position: center;"
-                                        alt="{{ noticia.titulo }}"
-                                    />
-                                {% endif %}
-                                <div class="carousel-caption home-carousel-caption text-start">
-                                    <span>{{ noticia.createdat|date:"d M Y" }}</span>
-                                    <h2>{{ noticia.titulo }}</h2>
-                                    {% if noticia.resumen %}
-                                        <p>{{ noticia.resumen|truncatewords:20 }}</p>
+        <div class="top-news py-3">
+            <div class="container">
+                <div class="row">
+                    <!-- Slider Principal (Izquierda) -->
+                    <div class="col-lg-7 col-md-12 tn-left mb-3 mb-lg-0">
+                        <div class="tn-slider">
+                            {% for noticia in slider %}
+                                <div class="tn-img position-relative">
+                                    {% if noticia.imagen_portada %}
+                                        <img src="{{ noticia.imagen_portada.display_url }}" alt="{{ noticia.titulo }}" style="height: 380px; width: 100%; object-fit: cover;" />
+                                    {% else %}
+                                        <img src="{% static 'img/news-800x500-1.jpg' %}" alt="{{ noticia.titulo }}" style="height: 380px; width: 100%; object-fit: cover;" />
                                     {% endif %}
+                                    <div class="tn-title">
+                                        {% if noticia.categoria %}
+                                            <span class="badge badge-danger mb-2 px-2 py-1">{{ noticia.categoria.nombre }}</span>
+                                        {% endif %}
+                                        <a href="{% url 'home:noticia_detalle' noticia.id %}" class="d-block font-weight-bold">
+                                            {{ noticia.titulo }}
+                                        </a>
+                                        <small class="text-white-50 mt-1 d-inline-block">
+                                            <i class="far fa-calendar-alt mr-1"></i>{{ noticia.createdat|date:"d M, Y" }}
+                                        </small>
+                                    </div>
                                 </div>
-                            </a>
+                            {% endfor %}
                         </div>
-                    {% endfor %}
-                </div>
-                <button
-                    class="carousel-control-prev"
-                    type="button"
-                    data-bs-target="#homeCarousel"
-                    data-bs-slide="prev"
-                >
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Anterior</span>
-                </button>
-                <button
-                    class="carousel-control-next"
-                    type="button"
-                    data-bs-target="#homeCarousel"
-                    data-bs-slide="next"
-                >
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Siguiente</span>
-                </button>
-            </div>
-        </section>
-    {% endif %}
+                    </div>
 
-    <section class="section recent-news-section">
-        <div class="container">
-            <div class="row mb-4 justify-content-center">
-                <div class="col-lg-8 text-center">
-                    <h2 class="posts-entry-title">Noticias recientes</h2>
-                    <a href="{% url 'home:categoria' %}" class="read-more">Ver todas</a>
-                </div>
-            </div>
-            <div class="row justify-content-center">
-                {% for noticia in publicaciones %}
-                    <div class="col-lg-4 mb-4">
-                        <div class="post-entry-alt">
-                            <a href="{% url 'home:noticia_detalle' noticia.id %}" class="imglink">
-                                {% if noticia.imagen_portada %}
-                                    <img
-                                        src="{{ noticia.imagen_portada.display_url }}"
-                                        alt="{{ noticia.titulo }}"
-                                        class="img-fluid publication-card-image"
-                                        style="height: 200px; width: 100%; object-fit: cover; object-position: center;"
-                                    />
-                                {% else %}
-                                    <img
-                                        src="{% static 'images/img_1_horizontal.jpg' %}"
-                                        alt="{{ noticia.titulo }}"
-                                        class="img-fluid publication-card-image"
-                                        style="height: 200px; width: 100%; object-fit: cover; object-position: center;"
-                                    />
-                                {% endif %}
-                            </a>
-                            <div class="excerpt">
-                                <h2>
-                                    <a href="{% url 'home:noticia_detalle' noticia.id %}">{{ noticia.titulo }}</a>
-                                </h2>
-                                <div class="post-meta align-items-center text-left clearfix">
-                                    <span>{{ noticia.createdat|date:"d M Y" }}</span>
-                                    <span>&nbsp;-&nbsp;{% if noticia.categoria %}{{ noticia.categoria.nombre }}{% else %}Sin categoría{% endif %}</span>
+                    <!-- Mosaico Secundario (Derecha: 2 noticias destacadas en vertical) -->
+                    <div class="col-lg-5 col-md-12 tn-right">
+                        <div class="row">
+                            {% for noticia in publicaciones|slice:":2" %}
+                                <div class="col-12 {% if not forloop.last %}mb-3{% endif %}">
+                                    <div class="tn-img position-relative">
+                                        {% if noticia.imagen_portada %}
+                                            <img src="{{ noticia.imagen_portada.display_url }}" alt="{{ noticia.titulo }}" style="height: 182px; width: 100%; object-fit: cover;" />
+                                        {% else %}
+                                            <img src="{% static 'img/news-350x223-1.jpg' %}" alt="{{ noticia.titulo }}" style="height: 182px; width: 100%; object-fit: cover;" />
+                                        {% endif %}
+                                        <div class="tn-title p-3">
+                                            {% if noticia.categoria %}
+                                                <span class="badge badge-warning text-dark mb-1 font-weight-bold" style="font-size: 10px;">
+                                                    {{ noticia.categoria.nombre }}
+                                                </span>
+                                            {% endif %}
+                                            <a href="{% url 'home:noticia_detalle' noticia.id %}" style="font-size: 15px; font-weight: 600; line-height: 1.3;">
+                                                {{ noticia.titulo|truncatechars:50 }}
+                                            </a>
+                                        </div>
+                                    </div>
                                 </div>
-                                <p>{{ noticia.resumen }}</p>
-                                <p>
-                                    <a href="{% url 'home:noticia_detalle' noticia.id %}" class="read-more">Saber más</a>
-                                </p>
-                                <small>Visitas: {{ noticia.visitas }}</small>
-                            </div>
+                            {% endfor %}
                         </div>
                     </div>
-                {% empty %}
-                    <div class="col-12">
-                        <p>No hay noticias publicadas todavía.</p>
-                    </div>
-                {% endfor %}
+                </div>
             </div>
         </div>
-    </section>
+    {% endif %}
+
+    <!-- ==================== CONTENIDO PRINCIPAL ==================== -->
+    <div class="main-news py-4">
+        <div class="container">
+            <div class="row">
+                <!-- Columna Izquierda: Grid de Noticias Recientes -->
+                <div class="col-lg-8">
+                    <!-- Encabezado de Sección -->
+                    <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
+                        <h3 class="font-weight-bold m-0" style="font-size: 22px; border-left: 4px solid #ed1c24; padding-left: 10px;">
+                            Últimas Noticias
+                        </h3>
+                        <a href="{% url 'home:categoria' %}" class="btn btn-sm btn-outline-danger font-weight-bold">
+                            Ver catálogo completo &rarr;
+                        </a>
+                    </div>
+
+                    <div class="row">
+                        {% for noticia in publicaciones %}
+                            <div class="col-md-6 mb-4">
+                                <article class="card h-100 border-0 shadow-sm rounded overflow-hidden">
+                                    <!-- Imagen con etiqueta de categoría superpuesta -->
+                                    <div class="position-relative overflow-hidden" style="height: 200px;">
+                                        <a href="{% url 'home:noticia_detalle' noticia.id %}">
+                                            {% if noticia.imagen_portada %}
+                                                <img src="{{ noticia.imagen_portada.display_url }}" alt="{{ noticia.titulo }}" class="w-100 h-100" style="object-fit: cover; transition: transform .3s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" />
+                                            {% else %}
+                                                <img src="{% static 'img/news-350x223-2.jpg' %}" alt="{{ noticia.titulo }}" class="w-100 h-100" style="object-fit: cover;" />
+                                            {% endif %}
+                                        </a>
+                                        {% if noticia.categoria %}
+                                            <span class="position-absolute badge badge-danger px-2 py-1" style="top: 12px; left: 12px; font-size: 11px;">
+                                                {{ noticia.categoria.nombre }}
+                                            </span>
+                                        {% endif %}
+                                    </div>
+
+                                    <!-- Cuerpo de la Noticia -->
+                                    <div class="card-body p-3 d-flex flex-column justify-content-between">
+                                        <div>
+                                            <!-- Metadatos: Fecha y Visitas -->
+                                            <div class="d-flex justify-content-between align-items-center text-muted mb-2" style="font-size: 12px;">
+                                                <span><i class="far fa-clock mr-1"></i>{{ noticia.createdat|date:"d M, Y" }}</span>
+                                                <span><i class="far fa-eye mr-1"></i>{{ noticia.visitas }} lecturas</span>
+                                            </div>
+
+                                            <!-- Título -->
+                                            <h5 class="card-title mb-2">
+                                                <a href="{% url 'home:noticia_detalle' noticia.id %}" class="text-dark font-weight-bold text-decoration-none" style="font-size: 16px; line-height: 1.35;">
+                                                    {{ noticia.titulo|truncatechars:65 }}
+                                                </a>
+                                            </h5>
+
+                                            <!-- Resumen -->
+                                            {% if noticia.resumen %}
+                                                <p class="card-text text-muted mb-3" style="font-size: 13px; line-height: 1.45;">
+                                                    {{ noticia.resumen|truncatewords:16 }}
+                                                </p>
+                                            {% endif %}
+                                        </div>
+
+                                        <!-- Botón de lectura -->
+                                        <div class="pt-2 border-top">
+                                            <a href="{% url 'home:noticia_detalle' noticia.id %}" class="text-danger font-weight-bold" style="font-size: 13px;">
+                                                Continuar leyendo <i class="fas fa-angle-right ml-1"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </article>
+                            </div>
+                        {% empty %}
+                            <div class="col-12 py-5 text-center bg-light rounded">
+                                <i class="far fa-newspaper fa-3x text-muted mb-3"></i>
+                                <p class="text-muted mb-0">No hay noticias publicadas en este momento.</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Columna Derecha: Sidebar Lateral -->
+                <div class="col-lg-4 mt-4 mt-lg-0">
+                    <!-- Widget: Más Vistas / Recientes -->
+                    <div class="mn-list bg-white p-3 shadow-sm rounded mb-4">
+                        <h4 class="font-weight-bold mb-3 pb-2" style="font-size: 17px; border-bottom: 2px solid #ed1c24;">
+                            <i class="fas fa-fire-alt text-danger mr-2"></i>Entradas Sugeridas
+                        </h4>
+                        <ul class="list-unstyled mb-0">
+                            {% for noticia in global_recientes|slice:":6" %}
+                                <li class="d-flex align-items-center {% if not forloop.last %}mb-3 pb-3 border-bottom{% endif %}">
+                                    <span class="font-weight-bold text-muted mr-3" style="font-size: 18px; min-width: 20px;">
+                                        0{{ forloop.counter }}
+                                    </span>
+                                    <div class="flex-grow-1">
+                                        <a href="{% url 'home:noticia_detalle' noticia.id %}" class="text-dark font-weight-bold d-block" style="font-size: 13px; line-height: 1.3;">
+                                            {{ noticia.titulo|truncatechars:55 }}
+                                        </a>
+                                        <small class="text-muted"><i class="far fa-calendar-alt mr-1"></i>{{ noticia.createdat|date:"d M, Y" }}</small>
+                                    </div>
+                                </li>
+                            {% empty %}
+                                <li><small class="text-muted">Sin noticias para mostrar.</small></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+
+                    <!-- Widget Opcional: Boletín informativo institucional -->
+                    <div class="bg-dark text-white p-4 rounded text-center shadow-sm">
+                        <i class="fas fa-paper-plane fa-2x text-danger mb-2"></i>
+                        <h5 class="font-weight-bold">Canaco Informa</h5>
+                        <p class="text-white-50" style="font-size: 13px;">Mantente al día con las circulares y avisos oficiales para el sector empresarial.</p>
+                        <a href="{% url 'home:categoria' %}" class="btn btn-sm btn-danger btn-block font-weight-bold">
+                            Explorar comunicados
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ==================== FIN CONTENIDO ==================== -->
 {% endblock content %}
