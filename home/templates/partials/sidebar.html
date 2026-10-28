@@ -1,72 +1,104 @@
 {% load static %}
 {% with current=request.resolver_match.url_name %}
-    <aside class="panel-sidebar flex-shrink-0">
-        <ul class="nav nav-pills nav-flush flex-column mb-auto text-start">
-            <!-- Mi Perfil: visible para todos -->
-            <li class="nav-item">
-                <a
-                    href="{% url 'home:perfil' %}"
-                    class="nav-link panel-nav-link {% if current == 'perfil' or current == 'crud_perfil' %}active{% endif %}"
-                >
-                    <span>Mi Perfil</span>
-                </a>
-            </li>
-
-            <!-- Solo visible para Administradores / Staff -->
-            {% if request.user.is_staff %}
-                <li>
-                    <a
-                        href="{% url 'home:crud_noticias' %}"
-                        class="nav-link panel-nav-link {% if current == 'crud_noticias' or current == 'crear_publicacion' or current == 'editar_publicacion' %}active{% endif %}"
-                    >
-                        <span>Noticias</span>
-                    </a>
-                </li>
-                <li>
-                    <a
-                        href="{% url 'home:crud_comentarios' %}"
-                        class="nav-link panel-nav-link {% if current == 'crud_comentarios' %}active{% endif %}"
-                    >
-                        <span>Comentarios</span>
-                    </a>
-                </li>
-                <li>
-                    <a
-                        href="{% url 'home:crud_categorias' %}"
-                        class="nav-link panel-nav-link {% if current == 'crud_categorias' or current == 'editar_categoria' %}active{% endif %}"
-                    >
-                        <span>Categorías</span>
-                    </a>
-                </li>
-                <li>
-                    <a
-                        href="{% url 'home:crud_usuarios' %}"
-                        class="nav-link panel-nav-link {% if current == 'crud_usuarios' or current == 'crear_usuario' or current == 'editar_usuario' %}active{% endif %}"
-                    >
-                        <span>Usuarios</span>
-                    </a>
-                </li>
+<div class="sidebar-panel bg-white shadow-sm rounded overflow-hidden">
+    <!-- Resumen de Usuario -->
+    <div class="p-3 bg-dark text-white text-center border-bottom">
+        <div class="mb-2">
+            {% if perfil_usuario.foto_perfil %}
+                <img
+                    src="{{ perfil_usuario.foto_perfil.display_url }}"
+                    alt="{{ request.user.username }}"
+                    class="rounded-circle shadow-sm"
+                    style="width: 55px; height: 55px; object-fit: cover; border: 2px solid #fff;"
+                />
+            {% else %}
+                <div class="rounded-circle bg-danger text-white d-inline-flex align-items-center justify-content-center shadow-sm" style="width: 55px; height: 55px; font-size: 20px;">
+                    <i class="fas fa-user"></i>
+                </div>
             {% endif %}
+        </div>
+        <h6 class="font-weight-bold mb-0 text-white">{{ request.user.username }}</h6>
+        <small class="text-white-50" style="font-size: 11px;">
+            {% if request.user.is_superuser %}Administrador{% elif request.user.is_staff %}Staff{% else %}Miembro{% endif %}
+        </small>
+    </div>
 
-            <!-- Cambiar contraseña: visible para todos -->
-            <li>
-                <a
-                    href="{% url 'home:crud_cambiar_contrasena' %}"
-                    class="nav-link panel-nav-link {% if current == 'crud_cambiar_contrasena' or current == 'crud_cambContra' %}active{% endif %}"
-                >
-                    <span>Cambiar<br />contraseña</span>
-                </a>
-            </li>
+    <!-- Navegación del Panel -->
+    <div class="list-group list-group-flush" style="font-size: 14px;">
+        <!-- Mi Perfil -->
+        <a
+            href="{% url 'home:perfil' %}"
+            class="list-group-item list-group-item-action d-flex align-items-center py-3 {% if current == 'perfil' or current == 'crud_perfil' %}active text-white bg-danger border-danger{% else %}text-dark{% endif %}"
+        >
+            <i class="fas fa-id-badge mr-3" style="width: 18px; text-align: center;"></i>
+            <span class="font-weight-500">Mi Perfil</span>
+        </a>
 
-            <!-- Cerrar sesión: visible para todos -->
-            <li>
-                <form method="post" action="{% url 'home:logout' %}" class="w-100">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-danger panel-logout-button w-100">
-                        <span>Cerrar sesión</span>
-                    </button>
-                </form>
-            </li>
-        </ul>
-    </aside>
+        <!-- Opciones exclusivas de Staff / Admin -->
+        {% if request.user.is_staff %}
+            <div class="px-3 pt-3 pb-1 text-uppercase text-muted font-weight-bold" style="font-size: 11px; letter-spacing: 0.5px; background: #fafafa;">
+                Gestión
+            </div>
+
+            <!-- Noticias -->
+            <a
+                href="{% url 'home:crud_noticias' %}"
+                class="list-group-item list-group-item-action d-flex align-items-center py-3 {% if current in 'crud_noticias crear_publicacion editar_publicacion' %}active text-white bg-danger border-danger{% else %}text-dark{% endif %}"
+            >
+                <i class="fas fa-newspaper mr-3" style="width: 18px; text-align: center;"></i>
+                <span class="font-weight-500">Noticias</span>
+            </a>
+
+            <!-- Comentarios -->
+            <a
+                href="{% url 'home:crud_comentarios' %}"
+                class="list-group-item list-group-item-action d-flex align-items-center py-3 {% if current == 'crud_comentarios' %}active text-white bg-danger border-danger{% else %}text-dark{% endif %}"
+            >
+                <i class="fas fa-comments mr-3" style="width: 18px; text-align: center;"></i>
+                <span class="font-weight-500">Comentarios</span>
+            </a>
+
+            <!-- Categorías -->
+            <a
+                href="{% url 'home:crud_categorias' %}"
+                class="list-group-item list-group-item-action d-flex align-items-center py-3 {% if current in 'crud_categorias editar_categoria' %}active text-white bg-danger border-danger{% else %}text-dark{% endif %}"
+            >
+                <i class="fas fa-folder mr-3" style="width: 18px; text-align: center;"></i>
+                <span class="font-weight-500">Categorías</span>
+            </a>
+
+            <!-- Usuarios -->
+            <a
+                href="{% url 'home:crud_usuarios' %}"
+                class="list-group-item list-group-item-action d-flex align-items-center py-3 {% if current in 'crud_usuarios crear_usuario editar_usuario' %}active text-white bg-danger border-danger{% else %}text-dark{% endif %}"
+            >
+                <i class="fas fa-users-cog mr-3" style="width: 18px; text-align: center;"></i>
+                <span class="font-weight-500">Usuarios</span>
+            </a>
+        {% endif %}
+
+        <div class="px-3 pt-3 pb-1 text-uppercase text-muted font-weight-bold" style="font-size: 11px; letter-spacing: 0.5px; background: #fafafa;">
+            Seguridad
+        </div>
+
+        <!-- Cambiar contraseña -->
+        <a
+            href="{% url 'home:crud_cambiar_contrasena' %}"
+            class="list-group-item list-group-item-action d-flex align-items-center py-3 {% if current in 'crud_cambiar_contrasena crud_cambContra' %}active text-white bg-danger border-danger{% else %}text-dark{% endif %}"
+        >
+            <i class="fas fa-key mr-3" style="width: 18px; text-align: center;"></i>
+            <span class="font-weight-500">Cambiar Contraseña</span>
+        </a>
+    </div>
+
+    <!-- Botón Cerrar Sesión -->
+    <div class="p-3 bg-light border-top">
+        <form method="post" action="{% url 'home:logout' %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-outline-danger btn-block font-weight-bold btn-sm py-2">
+                <i class="fas fa-sign-out-alt mr-2"></i> Cerrar sesión
+            </button>
+        </form>
+    </div>
+</div>
 {% endwith %}

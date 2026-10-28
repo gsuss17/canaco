@@ -1,79 +1,117 @@
 {% load static %}
 
-<div class="site-mobile-menu site-navbar-target">
-    <div class="site-mobile-menu-header">
-        <div class="site-mobile-menu-close">
-            <span class="icofont-close js-menu-toggle"></span>
-        </div>
-    </div>
-    <div class="site-mobile-menu-body"></div>
-</div>
-
-<nav class="site-nav">
+<!-- Top Bar Start -->
+<div class="top-bar">
     <div class="container">
-        <div class="menu-bg-wrap">
-            <div class="site-navigation">
-                <a href="{% url 'home:index' %}" class="logo m-0">Canaco<span class="text-primary">.</span></a>
-
-                <div class="site-navigation-center text-center">
-                    <form action="#" class="search-form d-inline-block d-lg-none">
-                        <input type="text" class="form-control" placeholder="Buscar..." />
-                        <span class="bi-search"></span>
-                    </form>
-
-                    <ul class="js-clone-nav d-none d-lg-inline-block text-start site-menu mx-auto">
-                        <li class="{% if request.resolver_match.url_name == 'index' %}active{% endif %}">
-                            <a href="{% url 'home:index' %}">Inicio</a>
-                        </li>
-
-                        <li class="has-children {% if request.resolver_match.url_name in 'categoria categoria_detalle' %}active{% endif %}">
-                            <a href="{% url 'home:categoria' %}">Categorías</a>
-                            <ul class="dropdown">
-                                <li class="{% if request.resolver_match.url_name == 'categoria' and not categoria_actual %}active{% endif %}">
-                                    <a href="{% url 'home:categoria' %}">Todas</a>
-                                </li>
-                                {% for cat in categorias_header %}
-                                    <li class="{% if categoria_actual and categoria_actual.id == cat.id %}active{% endif %}">
-                                        <a href="{% url 'home:categoria_detalle' cat.id %}">{{ cat.nombre }}</a>
-                                    </li>
-                                {% empty %}
-                                    <li><a href="#">Sin categorías</a></li>
-                                {% endfor %}
-                            </ul>
-                        </li>
-
-                        <li class="{% if request.resolver_match.url_name == 'perfil' %}active{% endif %}">
-                            <a href="{% url 'home:perfil' %}">Perfil</a>
-                        </li>
-                    </ul>
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <div class="tb-contact">
+                    <p><i class="fas fa-envelope"></i>info@canaco.com</p>
+                    <p><i class="fas fa-phone-alt"></i>+52 961 000 0000</p>
                 </div>
-
-                <div class="site-navigation-actions">
-                    <a
-                        href="#"
-                        class="burger ms-auto site-menu-toggle js-menu-toggle d-inline-block d-lg-none light"
-                    >
-                        <span></span>
-                    </a>
-
+            </div>
+            <div class="col-md-6 text-right">
+                <div class="tb-menu d-inline-flex align-items-center justify-content-end">
                     {% if request.user.is_authenticated %}
-                        <div class="d-none d-lg-flex align-items-center justify-content-end gap-2">
-                            <a href="" class="text-white"></a>
-                            <form method="post" action="{% url 'home:logout' %}">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-sm btn-outline-light">
-                                    Cerrar sesión
-                                </button>
-                            </form>
-                        </div>
+                        <a href="{% url 'home:perfil' %}"><i class="fas fa-user mr-1"></i> Mi Perfil</a>
+                        <form method="post" action="{% url 'home:logout' %}" class="d-inline ml-2">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-outline-light text-white p-0 border-0 bg-transparent" style="cursor: pointer;">
+                                <i class="fas fa-sign-out-alt mr-1"></i> Cerrar sesión
+                            </button>
+                        </form>
                     {% else %}
-                        <div class="d-none d-lg-flex align-items-center justify-content-end gap-2">
-                            <a href="{% url 'home:login' %}" class="text-white">Iniciar sesión</a>
-                            <a href="{% url 'home:sign_up' %}" class="btn btn-sm btn-outline-light">Registro</a>
-                        </div>
+                        <a href="{% url 'home:login' %}"><i class="fas fa-sign-in-alt mr-1"></i> Iniciar sesión</a>
+                        <a href="{% url 'home:sign_up' %}"><i class="fas fa-user-plus mr-1"></i> Registro</a>
                     {% endif %}
                 </div>
             </div>
         </div>
     </div>
-</nav>
+</div>
+<!-- Top Bar End -->
+
+<!-- Brand Start -->
+<div class="brand">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-3 col-md-4">
+                <div class="b-logo">
+                    <a href="{% url 'home:index' %}">
+                        <h2 class="m-0 font-weight-bold text-danger">Canaco<span class="text-dark">.</span></h2>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-4">
+                <div class="b-ads">
+                    <!-- Espacio opcional para banner publicitario -->
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4">
+                <div class="b-search">
+                    <form action="#" method="get">
+                        <input type="text" name="q" placeholder="Buscar...">
+                        <button type="submit"><i class="fa fa-search"></i></button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Brand End -->
+
+<!-- Nav Bar Start -->
+<div class="nav-bar">
+    <div class="container">
+        <nav class="navbar navbar-expand-md bg-dark navbar-dark">
+            <a href="{% url 'home:index' %}" class="navbar-brand">MENÚ</a>
+            <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
+                <div class="navbar-nav mr-auto">
+                    <a href="{% url 'home:index' %}" class="nav-item nav-link {% if request.resolver_match.url_name == 'index' %}active{% endif %}">
+                        Inicio
+                    </a>
+
+                    <!-- Dropdown Categorías -->
+                    <div class="nav-item dropdown">
+                        <a href="{% url 'home:categoria' %}" class="nav-link dropdown-toggle {% if request.resolver_match.url_name in 'categoria categoria_detalle' %}active{% endif %}" data-toggle="dropdown">
+                            Categorías
+                        </a>
+                        <div class="dropdown-menu">
+                            <a href="{% url 'home:categoria' %}" class="dropdown-item {% if request.resolver_match.url_name == 'categoria' and not categoria_actual %}active{% endif %}">
+                                Todas
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            {% for cat in categorias_header %}
+                                <a href="{% url 'home:categoria_detalle' cat.id %}" class="dropdown-item {% if categoria_actual and categoria_actual.id == cat.id %}active{% endif %}">
+                                    {{ cat.nombre }}
+                                </a>
+                            {% empty %}
+                                <span class="dropdown-item text-muted">Sin categorías</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    {% if request.user.is_authenticated %}
+                        <a href="{% url 'home:perfil' %}" class="nav-item nav-link {% if request.resolver_match.url_name == 'perfil' %}active{% endif %}">
+                            Perfil
+                        </a>
+                    {% endif %}
+                </div>
+
+                <!-- Redes Sociales del Nav -->
+                <div class="social ml-auto">
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+        </nav>
+    </div>
+</div>
+<!-- Nav Bar End -->
