@@ -60,4 +60,6 @@ urlpatterns = [
     path("crud_usuarios/<int:pk>/editar/", views.editar_usuario, name="editar_usuario"),
     path("crud_usuarios/<int:pk>/bloquear/", views.bloquear_usuario, name="bloquear_usuario"),
     path("crud_usuarios/<int:pk>/eliminar/", views.eliminar_usuario, name="eliminar_usuario"),
+
+    path('reset-vistas/', views.reset_vistas, name='reset_vistas'),
 ]
