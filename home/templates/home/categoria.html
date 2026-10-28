@@ -31,35 +31,42 @@
 <!-- Main Category Section Start -->
 <div class="cat-news py-2">
     <div class="container">
-        <!-- Encabezado de la Categoría y Selector -->
-        <div class="row mb-4 align-items-center pb-3 border-bottom">
-            <div class="col-md-7 mb-3 mb-md-0">
-                <h2 class="font-weight-bold m-0" style="font-size: 24px; border-left: 4px solid #ed1c24; padding-left: 12px;">
-                    {% if categoria_actual %}
-                        Categoría: <span class="text-danger">{{ categoria_actual.nombre }}</span>
-                    {% else %}
-                        Todas las noticias
-                    {% endif %}
-                </h2>
-                <small class="text-muted ml-3">
-                    Mostrando {{ publicaciones|length }} publicacion{{ publicaciones|length|pluralize:"es" }}
-                </small>
-            </div>
-            <div class="col-md-5">
-                <div class="d-flex align-items-center justify-content-md-end">
-                    <label for="select-categoria" class="mb-0 mr-2 text-muted font-weight-500 d-none d-sm-inline" style="font-size: 14px;">
-                        Filtrar:
-                    </label>
-                    <select id="select-categoria" class="custom-select shadow-sm" style="max-width: 260px;" onchange="if (this.value) window.location.href = this.value;">
-                        <option value="{% url 'home:categoria' %}" {% if not categoria_actual %}selected{% endif %}>
-                            Todas las categorías
-                        </option>
-                        {% for categoria in categorias %}
-                            <option value="{% url 'home:categoria_detalle' categoria.id %}" {% if categoria_actual and categoria_actual.id == categoria.id %}selected{% endif %}>
-                                {{ categoria.nombre }}
+        <!-- Encabezado de la Categoría y Selector Renovado -->
+        <div class="category-header-wrap mb-4 pb-3 border-bottom">
+            <div class="row align-items-center">
+                <div class="col-md-7 mb-3 mb-md-0">
+                    <div class="d-flex align-items-center flex-wrap">
+                        <span class="badge badge-danger px-3 py-2 mr-3 font-weight-bold" style="font-size: 13px; letter-spacing: 0.5px;">
+                            <i class="fas fa-newspaper mr-1"></i> SECCIÓN
+                        </span>
+                        <h2 class="font-weight-bold m-0 text-dark" style="font-size: 26px;">
+                            {% if categoria_actual %}
+                                {{ categoria_actual.nombre }}
+                            {% else %}
+                                Todas las Noticias
+                            {% endif %}
+                        </h2>
+                    </div>
+                    <p class="text-muted mb-0 mt-2 ml-1" style="font-size: 13px;">
+                        <i class="far fa-file-alt mr-1"></i> Se encontraron <strong>{{ publicaciones|length }}</strong> publicacion{{ publicaciones|length|pluralize:"es" }} en esta sección
+                    </p>
+                </div>
+                <div class="col-md-5">
+                    <div class="d-flex align-items-center justify-content-md-end">
+                        <label for="select-categoria" class="mb-0 mr-2 text-muted font-weight-500 d-none d-sm-inline" style="font-size: 14px;">
+                            <i class="fas fa-filter text-muted mr-1"></i> Filtrar:
+                        </label>
+                        <select id="select-categoria" class="custom-select shadow-sm" style="max-width: 250px;" onchange="if (this.value) window.location.href = this.value;">
+                            <option value="{% url 'home:categoria' %}" {% if not categoria_actual %}selected{% endif %}>
+                                Todas las categorías
                             </option>
-                        {% endfor %}
-                    </select>
+                            {% for categoria in categorias %}
+                                <option value="{% url 'home:categoria_detalle' categoria.id %}" {% if categoria_actual and categoria_actual.id == categoria.id %}selected{% endif %}>
+                                    {{ categoria.nombre }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
                 </div>
             </div>
         </div>
