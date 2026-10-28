@@ -1,5 +1,37 @@
 {% load static %}
 
+<!-- Estilos para suavizar la fijación de la barra de navegación -->
+<style>
+    /* Transición suave para la barra de navegación */
+    .nav-bar {
+        transition: all 0.3s ease-in-out;
+        z-index: 999;
+    }
+
+    /* Cuando el script del tema agrega la clase fijada */
+    .nav-bar.nav-sticky {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        width: 100% !important;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.18) !important;
+        animation: smoothNavSlideDown 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    /* Animación suave de descenso */
+    @keyframes smoothNavSlideDown {
+        from {
+            transform: translateY(-100%);
+            opacity: 0.7;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+</style>
+
 <!-- Top Bar Start -->
 <div class="top-bar">
     <div class="container">
