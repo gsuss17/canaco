@@ -4,7 +4,6 @@
 {% block title %}Iniciar Sesión - Canaco{% endblock title %}
 
 {% block content %}
-<!-- Breadcrumb Start -->
 <div class="breadcrumb-wrap py-3 bg-light border-bottom mb-4">
     <div class="container">
         <ul class="breadcrumb mb-0 bg-transparent p-0" style="font-size: 14px;">
@@ -13,45 +12,33 @@
         </ul>
     </div>
 </div>
-<!-- Breadcrumb End -->
 
-<!-- Login Section Start -->
 <div class="login-section py-4 my-3">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-7 col-lg-5">
                 <div class="card border-0 shadow-sm rounded overflow-hidden">
-                    <!-- Cabecera de la tarjeta -->
                     <div class="bg-dark text-white p-4 text-center">
-                        <div class="mb-2">
-                            <span class="d-inline-flex align-items-center justify-content-center rounded-circle bg-danger text-white" style="width: 52px; height: 52px; font-size: 22px;">
-                                <i class="fas fa-user-lock"></i>
-                            </span>
-                        </div>
+                        <span class="d-inline-flex align-items-center justify-content-center rounded-circle bg-danger text-white mb-2" style="width: 52px; height: 52px; font-size: 22px;">
+                            <i class="fas fa-user-lock"></i>
+                        </span>
                         <h4 class="font-weight-bold mb-1 text-white">Iniciar Sesión</h4>
                         <p class="text-white-50 mb-0" style="font-size: 13px;">Ingresa tus credenciales para acceder</p>
                     </div>
 
-                    <!-- Cuerpo del formulario -->
                     <div class="card-body p-4 bg-white">
-                        <!-- Django Form Errors -->
                         {% if form.errors %}
                             <div class="alert alert-danger alert-dismissible fade show" role="alert" style="font-size: 13px;">
                                 <i class="fas fa-exclamation-circle mr-1"></i> Usuario o contraseña incorrectos.
-                                <button type="button" class="close" data-dismiss="alert" aria-label="Cerrar">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Cerrar"><span aria-hidden="true">&times;</span></button>
                             </div>
                         {% endif %}
 
-                        <!-- Django Messages -->
                         {% if messages %}
                             {% for message in messages %}
                                 <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert" style="font-size: 13px;">
                                     {{ message }}
-                                    <button type="button" class="close" data-dismiss="alert" aria-label="Cerrar">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Cerrar"><span aria-hidden="true">&times;</span></button>
                                 </div>
                             {% endfor %}
                         {% endif %}
@@ -59,56 +46,58 @@
                         <form method="POST">
                             {% csrf_token %}
 
+                            <!-- Campo Usuario -->
                             <div class="form-group mb-3">
                                 <label for="username" class="font-weight-500 text-dark" style="font-size: 14px;">Usuario</label>
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text bg-light border-right-0 text-muted">
-                                            <i class="fas fa-user"></i>
-                                        </span>
-                                    </div>
-                                    <input
-                                        type="text"
-                                        id="username"
-                                        name="username"
-                                        class="form-control border-left-0"
-                                        placeholder="Ingresa tu usuario"
-                                        required
-                                        autofocus
+                                <div class="position-relative">
+                                    <i class="fas fa-user position-absolute text-muted" style="top: 50%; left: 14px; transform: translateY(-50%); pointer-events: none; z-index: 5;"></i>
+                                    <input 
+                                        type="text" 
+                                        id="username" 
+                                        name="username" 
+                                        class="form-control" 
+                                        style="padding-left: 40px;" 
+                                        placeholder="Ingresa tu usuario" 
+                                        required 
+                                        autofocus 
                                     />
                                 </div>
                             </div>
 
+                            <!-- Campo Contraseña con Botón de Ojo Integrado -->
                             <div class="form-group mb-4">
                                 <label for="password" class="font-weight-500 text-dark" style="font-size: 14px;">Contraseña</label>
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text bg-light border-right-0 text-muted">
-                                            <i class="fas fa-key"></i>
-                                        </span>
-                                    </div>
-                                    <input
-                                        type="password"
-                                        id="password"
-                                        name="password"
-                                        class="form-control border-left-0"
-                                        placeholder="Ingresa tu contraseña"
-                                        required
+                                <div class="position-relative">
+                                    <i class="fas fa-key position-absolute text-muted" style="top: 50%; left: 14px; transform: translateY(-50%); pointer-events: none; z-index: 5;"></i>
+                                    <input 
+                                        type="password" 
+                                        id="password" 
+                                        name="password" 
+                                        class="form-control" 
+                                        style="padding-left: 40px; padding-right: 42px;" 
+                                        placeholder="Ingresa tu contraseña" 
+                                        required 
                                     />
+                                    <button 
+                                        type="button" 
+                                        id="togglePassword" 
+                                        tabindex="-1"
+                                        class="btn p-0 border-0 position-absolute text-muted" 
+                                        style="top: 50%; right: 14px; transform: translateY(-50%); background: transparent; box-shadow: none; z-index: 5;"
+                                        title="Mostrar/Ocultar contraseña"
+                                    >
+                                        <i class="fas fa-eye" id="togglePasswordIcon"></i>
+                                    </button>
                                 </div>
                             </div>
 
-                            <div class="form-group mb-3">
-                                <button type="submit" class="btn btn-danger btn-block font-weight-bold py-2 shadow-sm">
-                                    <i class="fas fa-sign-in-alt mr-2"></i>Ingresar
-                                </button>
-                            </div>
+                            <button type="submit" class="btn btn-danger btn-block font-weight-bold py-2 shadow-sm mb-3">
+                                <i class="fas fa-sign-in-alt mr-2"></i>Ingresar
+                            </button>
 
-                            <div class="text-center mt-3 pt-3 border-top" style="font-size: 14px;">
+                            <div class="text-center pt-3 border-top" style="font-size: 14px;">
                                 <span class="text-muted">¿Aún no tienes una cuenta?</span>
-                                <a href="{% url 'home:sign_up' %}" class="text-danger font-weight-bold ml-1">
-                                    Regístrate aquí
-                                </a>
+                                <a href="{% url 'home:sign_up' %}" class="text-danger font-weight-bold ml-1">Regístrate aquí</a>
                             </div>
                         </form>
                     </div>
@@ -117,5 +106,15 @@
         </div>
     </div>
 </div>
-<!-- Login Section End -->
+
+<script>
+    document.getElementById("togglePassword").addEventListener("click", function () {
+        const input = document.getElementById("password");
+        const icon = document.getElementById("togglePasswordIcon");
+        const isPass = input.type === "password";
+        input.type = isPass ? "text" : "password";
+        icon.className = isPass ? "fas fa-eye-slash text-danger" : "fas fa-eye";
+        input.focus();
+    });
+</script>
 {% endblock content %}
