@@ -188,6 +188,9 @@
                                     name="password1"
                                     class="form-control border-left-0"
                                     placeholder="{% if usuario_editado %}Dejar vacío para no cambiar{% else %}Mínimo 8 caracteres{% endif %}"
+                                    minlength="8"
+                                    pattern=".*\S.*"
+                                    title="La contraseña no puede consistir únicamente en espacios en blanco."
                                     {% if not usuario_editado %}required{% endif %}
                                 />
                             </div>
@@ -207,6 +210,9 @@
                                     name="password2"
                                     class="form-control border-left-0"
                                     placeholder="{% if usuario_editado %}Dejar vacío para no cambiar{% else %}Repite la contraseña{% endif %}"
+                                    minlength="8"
+                                    pattern=".*\S.*"
+                                    title="La contraseña no puede consistir únicamente en espacios en blanco."
                                     {% if not usuario_editado %}required{% endif %}
                                 />
                             </div>

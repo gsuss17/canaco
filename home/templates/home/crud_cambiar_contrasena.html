@@ -54,6 +54,7 @@
                                 name="actual"
                                 class="form-control border-left-0"
                                 placeholder="Ingresa tu contraseña vigente"
+                                minlength="8"
                                 required
                                 autofocus
                             />
@@ -77,7 +78,10 @@
                                 name="nueva"
                                 class="form-control border-left-0"
                                 placeholder="Mínimo 8 caracteres"
+                                minlength="8"
                                 required
+                                pattern=".*\S.*"
+                                title="La contraseña no puede consistir únicamente en espacios en blanco."
                             />
                         </div>
                     </div>
@@ -97,7 +101,10 @@
                                 name="confirmar"
                                 class="form-control border-left-0"
                                 placeholder="Repite la nueva contraseña"
+                                minlength="8"
                                 required
+                                pattern=".*\S.*"
+                                title="La contraseña no puede consistir únicamente en espacios en blanco."
                             />
                         </div>
                     </div>

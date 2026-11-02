@@ -2,6 +2,44 @@
 {% load static %}
 
 {% block title %}{{ publicacion.titulo }} - Canaco{% endblock title %}
+{% block extra_css %}
+<!-- CSS de GLightbox -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css" />
+
+<style>
+    .gslide-image img {
+        background: transparent !important;
+        box-shadow: none !important;
+    }
+    .gslide-media {
+        background: transparent !important;
+    }
+    .post-content-body img {
+        max-width: 100% !important;
+        height: auto !important;
+        border-radius: 6px;
+        margin: 1.5rem auto;
+        display: block;
+        background: transparent !important;
+    }
+    .sn-cover-wrapper {
+        width: fit-content;      /* Se contrae al tamaño de la foto */
+        max-width: 100%;        /* Nunca desborda la columna */
+        margin: 0 auto;          /* Centrado automático */
+        background: transparent !important; /* Elimina el fondo blanco/gris */
+        overflow: hidden;
+    }
+    .sn-cover-wrapper img {
+        display: block;
+        max-width: 100%;
+        max-height: 480px;      /* Altura tope balanceada */
+        width: auto;
+        height: auto;
+        object-fit: contain;     /* Muestra la imagen completa sin recortarla */
+        cursor: zoom-in;
+    }
+</style>
+{% endblock extra_css %}
 
 {% block content %}
 <!-- Breadcrumb Start -->
@@ -61,15 +99,14 @@
                         {{ publicacion.titulo }}
                     </h1>
 
-                    <!-- Imagen de Portada -->
+                    <!-- Imagen de Portada Normalizada -->
                     {% if publicacion.imagen_portada %}
-                        <div class="sn-img my-4 rounded overflow-hidden">
-                            <a href="{{ publicacion.imagen_portada.display_url }}" class="glightbox" data-gallery="noticia-galeria">
+                        <div class="sn-img my-4 rounded overflow-hidden sn-cover-wrapper">
+                            <a href="{{ publicacion.imagen_portada.display_url }}" class="glightbox w-100 h-100" data-gallery="noticia-galeria">
                                 <img
                                     src="{{ publicacion.imagen_portada.display_url }}"
                                     alt="{{ publicacion.titulo }}"
-                                    class="w-100 rounded"
-                                    style="max-height: 480px; object-fit: cover; cursor: zoom-in;"
+                                    class="rounded"
                                 />
                             </a>
                         </div>
@@ -235,27 +272,36 @@
 </div>
 <!-- Single News End-->
 
-<!-- Script GLightbox -->
+<!-- Librería JS de GLightbox -->
+<script src="https://cdn.jsdelivr.net/npm/glightbox/dist/js/glightbox.min.js"></script>
+
+<!-- Inicialización -->
 <script>
     document.addEventListener("DOMContentLoaded", function () {
+        // Envolver imágenes del cuerpo en el enlace de GLightbox si no lo tienen
         document.querySelectorAll(".post-content-body img").forEach(function (img) {
             img.style.cursor = "zoom-in";
-            const enlace = document.createElement("a");
-            enlace.href = img.src;
-            enlace.className = "glightbox";
-            enlace.setAttribute("data-gallery", "noticia-galeria");
-            img.parentNode.insertBefore(enlace, img);
-            enlace.appendChild(img);
+            if (!img.closest("a")) {
+                const enlace = document.createElement("a");
+                enlace.href = img.src;
+                enlace.className = "glightbox";
+                enlace.setAttribute("data-gallery", "noticia-galeria");
+                img.parentNode.insertBefore(enlace, img);
+                enlace.appendChild(img);
+            }
         });
 
+        // Inicializar el visor con botón de cierre habilitado
         if (typeof GLightbox !== "undefined") {
-            GLightbox({
+            const lightbox = GLightbox({
                 selector: ".glightbox",
                 touchNavigation: true,
                 loop: true,
-                zoomable: true
+                zoomable: true,
+                closeButton: true,
+                closeOnOutsideClick: true
             });
         }
     });
-</script>
+</script>   
 {% endblock content %}

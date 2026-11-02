@@ -165,8 +165,13 @@ def sign_up(request):
         first_name = request.POST.get("first_name", "").strip()
         apellido_paterno = request.POST.get("apellido_paterno", "").strip()
         apellido_materno = request.POST.get("apellido_materno", "").strip()
-        password1 = request.POST.get("password1", "")
-        password2 = request.POST.get("password2", "")
+        password1 = request.POST.get("password1", "").strip()
+        password2 = request.POST.get("password2", "").strip()
+
+        if len(password1) < 8:
+            messages.error(request, "La contraseña debe tener al menos 8 caracteres.")
+            return redirect("home:sign_up")
+        
 
         if password1 != password2:
             messages.error(request, "Las contraseñas no coinciden.")
@@ -264,8 +269,13 @@ def crud_perfil(request):
 @login_required
 def crud_cambiar_contrasena(request):
     if request.method == "POST":
-        actual = request.POST.get("actual")
-        nueva = request.POST.get("nueva")
+        actual = request.POST.get("actual").strip()
+        nueva = request.POST.get("nueva").strip()
+
+        if len(nueva) < 8:
+            messages.error(request, "La nueva contraseña debe tener al menos 8 caracteres reales.")
+            return redirect("home:crud_cambiar_contrasena")
+        
         confirmar = request.POST.get("confirmar")
         user = request.user
 
@@ -482,11 +492,19 @@ def crear_usuario(request):
         first_name = request.POST.get("first_name", "").strip()
         apellido_paterno = request.POST.get("apellido_paterno", "").strip()
         apellido_materno = request.POST.get("apellido_materno", "").strip()
-        password1 = request.POST.get("password1", "")
-        password2 = request.POST.get("password2", "")
+        
+        # Limpiamos espacios accidentales o maliciosos en los extremos
+        password1 = request.POST.get("password1", "").strip()
+        password2 = request.POST.get("password2", "").strip()
 
         if not username or not password1:
             messages.error(request, "Usuario y contraseña son obligatorios.")
+            return redirect("home:crear_usuario")
+
+        # --- VALIDACIÓN DE LONGITUD MÍNIMA ---
+        # Valida que tenga al menos 8 caracteres reales (no solo espacios)
+        if len(password1) < 8:
+            messages.error(request, "La contraseña debe tener al menos 8 caracteres (sin contar espacios al inicio o final).")
             return redirect("home:crear_usuario")
 
         if password1 != password2:
@@ -533,10 +551,15 @@ def editar_usuario(request, pk):
             usuario.is_staff = rol in ["editor", "administrador"]
             usuario.is_superuser = rol == "administrador"
 
-        password1 = request.POST.get("password1", "")
-        password2 = request.POST.get("password2", "")
+        password1 = request.POST.get("password1", "").strip()
+        password2 = request.POST.get("password2", "").strip()
 
         if password1 or password2:
+            # --- VALIDACIÓN DE LONGITUD MÍNIMA AL EDITAR ---
+            if len(password1) < 8:
+                messages.error(request, "La nueva contraseña debe tener al menos 8 caracteres reales.")
+                return redirect("home:editar_usuario", pk=usuario.pk)
+
             if password1 != password2:
                 messages.error(request, "Las contraseñas no coinciden.")
                 return redirect("home:editar_usuario", pk=usuario.pk)
