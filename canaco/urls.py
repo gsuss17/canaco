@@ -22,4 +22,9 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('', include('home.urls')),
     path('admin/', admin.site.urls),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]
+
+# --- HABILITAR ESTILOS Y MEDIA EN MODO LOCAL ---
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS[0])
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
