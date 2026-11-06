@@ -38,6 +38,8 @@ if not DEBUG:
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
 
+GA_MEASUREMENT_ID = config('GA_MEASUREMENT_ID', default=None)
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -75,6 +77,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'home.context_processors.global_categorias',
                 'home.context_processors.perfil_context',
+                'home.context_processors.google_analytics',
             ],
         },
     },
