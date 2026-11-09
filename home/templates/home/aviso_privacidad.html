@@ -1,0 +1,61 @@
+{% extends 'partials/base.html' %}
+
+{% block title %}Aviso de Privacidad | Canaco Noticias{% endblock title %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="bg-white p-4 p-md-5 rounded shadow-sm border">
+                <h1 class="h2 font-weight-bold mb-3 text-dark">Aviso de Privacidad</h1>
+                <p class="text-muted small">Última actualización: Noviembre de 2026</p>
+                <hr class="my-4">
+
+                <section class="mb-4">
+                    <h5 class="font-weight-bold text-dark">1. Identidad y Domicilio del Responsable</h5>
+                    <p class="text-muted" style="line-height: 1.6;">
+                        El portal de noticias <strong>Canaco</strong>, en su carácter de medio digital informativo, es responsable del uso, protección y tratamiento de los datos personales y estadísticos recabados a través de este sitio web.
+                    </p>
+                </section>
+
+                <section class="mb-4">
+                    <h5 class="font-weight-bold text-dark">2. Información Recabada y Finalidades</h5>
+                    <p class="text-muted" style="line-height: 1.6;">
+                        El tratamiento de la información se divide en dos categorías según la interacción del usuario:
+                    </p>
+                    <ul class="text-muted pl-4" style="line-height: 1.6;">
+                        <li class="mb-2">
+                            <strong>Lectores generales y navegación web:</strong> Recopilamos datos estadísticos anonimizados (dirección IP enmascarada, tipo de navegador, páginas y categorías consultadas, tiempo de permanencia). Su finalidad exclusiva es evaluar el interés informativo de las notas y mejorar la navegación del portal.
+                        </li>
+                        <li class="mb-2">
+                            <strong>Usuarios registrados y participación comunitaria:</strong> Cuando crea una cuenta para redactar o participar en los comentarios de las publicaciones, recabamos su nombre de usuario y correo electrónico para fines de autenticación, atribución pública de comentarios y moderación de contenido.
+                        </li>
+                    </ul>
+                </section>
+
+                <section class="mb-4">
+                    <h5 class="font-weight-bold text-dark">3. Cookies y Herramientas Analíticas (Google Analytics)</h5>
+                    <p class="text-muted" style="line-height: 1.6;">
+                        Este portal utiliza cookies de <strong>Google Analytics 4</strong> provistas por Google LLC. Estas cookies permiten medir el tráfico de forma agregada sin asociar su identidad física a la navegación. La activación de estas herramientas analíticas está sujeta a su consentimiento expreso mediante nuestro banner de configuración. Puede revocar este permiso o eliminar las cookies en cualquier momento desde las preferencias de su navegador.
+                    </p>
+                </section>
+
+                <section class="mb-4">
+                    <h5 class="font-weight-bold text-dark">4. Transferencia de Datos</h5>
+                    <p class="text-muted" style="line-height: 1.6;">
+                        Canaco no comercializa, transfiere ni cede datos personales a empresas de terceros ajenas al servicio técnico indispensable para el funcionamiento de la plataforma o requerimientos formulados por autoridad competente.
+                    </p>
+                </section>
+
+                <section class="mb-4">
+                    <h5 class="font-weight-bold text-dark">5. Derechos ARCO y Contacto</h5>
+                    <p class="text-muted" style="line-height: 1.6;">
+                        Usted tiene derecho a conocer qué datos tenemos de usted, solicitar su corrección o cancelación de su perfil y comentarios (derechos ARCO). Para ejercerlos, puede comunicarse con nosotros mediante el formulario disponible en la sección de 
+                        <a href="{% url 'home:contactanos' %}" class="text-primary font-weight-bold">Contáctanos</a>.
+                    </p>
+                </section>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

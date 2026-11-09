@@ -1,0 +1,70 @@
+<!-- Modal flotante de consentimiento de privacidad y analítica -->
+<div id="cookie-banner" class="card shadow-lg position-fixed" style="display: none; bottom: 25px; right: 25px; max-width: 420px; z-index: 9999; border-radius: 8px; border: 1px solid rgba(0,0,0,0.12);">
+    <div class="card-body p-3">
+        <div class="d-flex align-items-center mb-2">
+            <i class="fas fa-shield-alt text-primary mr-2" style="font-size: 1.1rem;"></i>
+            <h6 class="card-title font-weight-bold mb-0">Aviso de Privacidad y Cookies</h6>
+        </div>
+        <p class="card-text text-muted small mb-3" style="line-height: 1.45;">
+            En <strong>Canaco Noticias</strong> utilizamos herramientas de medición (Google Analytics) para conocer qué contenidos informativos son de mayor interés y optimizar tu experiencia de lectura. Para más detalles, consulta nuestro 
+            <a href="{% url 'home:aviso_privacidad' %}" target="_blank" class="text-primary font-weight-bold">Aviso de Privacidad</a>.
+        </p>
+        <div class="d-flex justify-content-end">
+            <button id="btn-reject-cookies" type="button" class="btn btn-sm btn-outline-secondary mr-2 px-3">
+                Rechazar
+            </button>
+            <button id="btn-accept-cookies" type="button" class="btn btn-sm btn-primary px-3">
+                Aceptar
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var banner = document.getElementById('cookie-banner');
+        var consent = localStorage.getItem('cookie_consent');
+        var reopenBtn = document.getElementById('btn-reopen-cookies');
+
+        // Mostrar el aviso automáticamente si el usuario no ha tomado una decisión
+        if (!consent) {
+            banner.style.display = 'block';
+        }
+
+        // Permitir reabrir el aviso desde el footer en cualquier momento
+        if (reopenBtn) {
+            reopenBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                banner.style.display = 'block';
+            });
+        }
+
+        // Evento al pulsar Aceptar
+        document.getElementById('btn-accept-cookies').addEventListener('click', function () {
+            localStorage.setItem('cookie_consent', 'granted');
+            if (typeof gtag === 'function') {
+                gtag('consent', 'update', {
+                    'analytics_storage': 'granted',
+                    'ad_storage': 'granted',
+                    'ad_user_data': 'granted',
+                    'ad_personalization': 'granted'
+                });
+            }
+            banner.style.display = 'none';
+        });
+
+        // Evento al pulsar Rechazar
+        document.getElementById('btn-reject-cookies').addEventListener('click', function () {
+            localStorage.setItem('cookie_consent', 'denied');
+            if (typeof gtag === 'function') {
+                gtag('consent', 'update', {
+                    'analytics_storage': 'denied',
+                    'ad_storage': 'denied',
+                    'ad_user_data': 'denied',
+                    'ad_personalization': 'denied'
+                });
+            }
+            banner.style.display = 'none';
+        });
+    });
+</script>

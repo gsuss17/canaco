@@ -36,7 +36,10 @@
                         <li><a href="#">Sobre nosotros</a></li>
                         <li><a href="#">Misión y Visión</a></li>
                         <li><a href="#">Términos y Condiciones</a></li>
-                        <li><a href="#">Aviso de Privacidad</a></li>
+                        <!-- Enlace conectado al Aviso de Privacidad -->
+                        <li><a href="{% url 'home:aviso_privacidad' %}">Aviso de Privacidad</a></li>
+                        <!-- Enlace dinámico para reabrir y modificar preferencias de cookies -->
+                        <li><a href="javascript:void(0);" id="btn-reopen-cookies">Preferencias de Cookies</a></li>
                     </ul>
                 </div>
             </div>

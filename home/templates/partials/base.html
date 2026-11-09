@@ -10,14 +10,33 @@
 
         <!-- Google Analytics (GA4) -->
         {% if GA_MEASUREMENT_ID %}
-        <script async src="https://www.googletagmanager.com/gtag/js?id={{ GA_MEASUREMENT_ID }}"></script>
-        <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
+            <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
 
-        gtag('config', '{{ GA_MEASUREMENT_ID }}');
-        </script>
+                // 1. Estado inicial por defecto: denegado
+                gtag('consent', 'default', {
+                    'analytics_storage': 'denied',
+                    'ad_storage': 'denied',
+                    'ad_user_data': 'denied',
+                    'ad_personalization': 'denied'
+                });
+
+                // 2. Si el usuario ya aceptó previamente en este navegador, conceder permisos
+                if (localStorage.getItem('cookie_consent') === 'granted') {
+                    gtag('consent', 'update', {
+                        'analytics_storage': 'granted',
+                        'ad_storage': 'granted',
+                        'ad_user_data': 'granted',
+                        'ad_personalization': 'granted'
+                    });
+                }
+            </script>
+            <script async src="https://www.googletagmanager.com/gtag/js?id={{ GA_MEASUREMENT_ID }}"></script>
+            <script>
+                gtag('js', new Date());
+                gtag('config', '{{ GA_MEASUREMENT_ID }}');
+            </script>
         {% endif %}
 
         <!-- Favicon -->
@@ -63,5 +82,7 @@
         <script src="{% static 'js/main.js' %}"></script>
 
         {% block extra_js %}{% endblock extra_js %}
+
+        {% include 'partials/cookie_banner.html' %}
     </body>
 </html>

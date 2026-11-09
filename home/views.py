@@ -612,3 +612,10 @@ def reset_vistas(request):
 
     messages.success(request, "Historial de lectura reiniciado con éxito.")
     return response
+
+
+def aviso_privacidad(request):
+    """
+    Renderiza la página institucional con el Aviso de Privacidad del CMS.
+    """
+    return render(request, 'home/aviso_privacidad.html')
