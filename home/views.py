@@ -98,9 +98,22 @@ def noticia(request, pk=None):
         messages.info(request, "Todavía no hay noticias publicadas.")
         return redirect("home:index")
 
-    Publicacion.objects.filter(pk=publicacion.pk).update(visitas=F("visitas") + 1)
-    publicacion.refresh_from_db()
+    # --- 1. DETECCIÓN DE VISITAS POR COOKIE DIRECTA ---
+    cookie_name = f"vista_noticia_{publicacion.pk}"
+    ya_vista = request.COOKIES.get(cookie_name)
 
+    # Solo contamos si:
+    # a) No tiene la cookie de haberla visto.
+    # b) Es la petición principal de la página (ignora peticiones fantasmas de imágenes/assets).
+    es_documento_principal = request.headers.get("Sec-Fetch-Dest", "document") in ["document", "empty", None]
+
+    debe_sumar = not ya_vista and es_documento_principal and request.method == "GET"
+
+    if debe_sumar:
+        Publicacion.objects.filter(pk=publicacion.pk).update(visitas=F("visitas") + 1)
+        publicacion.refresh_from_db(fields=["visitas"])
+
+    # Procesar comentarios
     if request.method == "POST":
         if not request.user.is_authenticated:
             messages.error(request, "Debes iniciar sesión para comentar.")
@@ -126,7 +139,8 @@ def noticia(request, pk=None):
 
     categorias = Categoria.objects.all().order_by("nombre")
 
-    return render(
+    # --- 2. RENDER Y FIJACIÓN DE LA COOKIE ---
+    response = render(
         request,
         "home/noticia.html",
         {
@@ -136,6 +150,12 @@ def noticia(request, pk=None):
             "categorias": categorias,
         },
     )
+
+    # Si se contó la visita, marcamos la cookie para que dure 24 horas (86400 segundos)
+    if debe_sumar:
+        response.set_cookie(cookie_name, "1", max_age=86400, samesite="Lax")
+
+    return response
 
 
 def sign_up(request):
@@ -553,3 +573,19 @@ def eliminar_usuario(request, pk):
     if request.method == "POST" and usuario != request.user:
         usuario.delete()
     return redirect("home:crud_usuarios")
+
+
+def reset_vistas(request):
+    """
+    Elimina todas las cookies de lectura ('vista_noticia_X')
+    para que el contador vuelva a sumar al visitar los artículos.
+    """
+    response = redirect("home:index")
+
+    # Recorremos todas las cookies recibidas del cliente
+    for cookie_key in list(request.COOKIES.keys()):
+        if cookie_key.startswith("vista_noticia_"):
+            response.delete_cookie(cookie_key)
+
+    messages.success(request, "Historial de lectura reiniciado con éxito.")
+    return response
